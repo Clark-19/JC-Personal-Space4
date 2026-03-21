@@ -1,0 +1,3370 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>James Clark — Personal Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ==================== CSS VARIABLES ==================== */
+:root {
+  --bg: #E8EAF0;
+  --bg2: #DFE1E8;
+  --surface: #E8EAF0;
+  --text: #2D3252;
+  --text2: #6B7299;
+  --text3: #9BA3C5;
+  --accent: #4361EE;
+  --accent2: #0EA5E9;
+  --grad: linear-gradient(135deg, #4361EE, #0EA5E9);
+  --grad-r: linear-gradient(135deg, #0EA5E9, #4361EE);
+  --danger: #EF4444;
+  --warn: #F59E0B;
+  --success: #10B981;
+  --neu-out: 6px 6px 14px #c5c8d4, -6px -6px 14px #ffffff;
+  --neu-out-sm: 3px 3px 8px #c5c8d4, -3px -3px 8px #ffffff;
+  --neu-in: inset 4px 4px 10px #c5c8d4, inset -4px -4px 10px #ffffff;
+  --neu-in-sm: inset 2px 2px 6px #c5c8d4, inset -2px -2px 6px #ffffff;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --sidebar-w: 240px;
+  --header-h: 64px;
+  --trans: 0.2s ease;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="dark"] {
+  --bg: #1C1E2E;
+  --bg2: #161825;
+  --surface: #1C1E2E;
+  --text: #E2E8F0;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --neu-out: 6px 6px 14px #13151f, -6px -6px 14px #252840;
+  --neu-out-sm: 3px 3px 8px #13151f, -3px -3px 8px #252840;
+  --neu-in: inset 4px 4px 10px #13151f, inset -4px -4px 10px #252840;
+  --neu-in-sm: inset 2px 2px 6px #13151f, inset -2px -2px 6px #252840;
+}
+
+/* ==================== RESET & BASE ==================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+h1,h2,h3,h4 { font-family: 'DM Serif Display', serif; }
+button { cursor: pointer; font-family: inherit; border: none; outline: none; background: none; }
+input, textarea, select { font-family: inherit; border: none; outline: none; background: none; color: var(--text); }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 99px; }
+::placeholder { color: var(--text3); }
+
+/* ==================== LAYOUT ==================== */
+#app { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+#sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--bg);
+  box-shadow: var(--neu-out);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  transition: transform var(--trans), box-shadow 0.3s;
+  padding: 24px 16px;
+}
+#sidebar .logo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 32px; padding: 0 4px;
+}
+#sidebar .logo-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  color: #fff; font-size: 18px; font-weight: bold;
+  box-shadow: 0 4px 15px rgba(67,97,238,0.3);
+  flex-shrink: 0;
+}
+#sidebar .logo-text { font-size: 13px; font-weight: 700; color: var(--text2); letter-spacing: 0.5px; }
+#sidebar .logo-text span { display: block; font-family: 'DM Serif Display',serif; font-size: 16px; color: var(--text); }
+
+/* Nav */
+.nav-list { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.nav-item a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-radius: 14px;
+  font-size: 14px; font-weight: 500; color: var(--text2);
+  transition: all var(--trans); position: relative;
+  white-space: nowrap;
+}
+.nav-item a:hover { color: var(--text); box-shadow: var(--neu-out-sm); }
+.nav-item a.active {
+  color: var(--accent);
+  box-shadow: var(--neu-in);
+  font-weight: 600;
+}
+.nav-item a svg { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--grad);
+  color: #fff; font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px; min-width: 20px; text-align: center;
+}
+
+/* Sidebar footer */
+.sidebar-footer { padding-top: 16px; border-top: 1px solid var(--bg2); }
+.theme-toggle {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 14px;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  box-shadow: var(--neu-out-sm); cursor: pointer;
+  transition: all var(--trans); width: 100%; justify-content: space-between;
+}
+.toggle-pill {
+  width: 36px; height: 20px; border-radius: 99px;
+  background: var(--bg2); box-shadow: var(--neu-in-sm);
+  position: relative; transition: background var(--trans);
+}
+.toggle-pill::after {
+  content: ''; position: absolute;
+  width: 14px; height: 14px; border-radius: 50%;
+  top: 3px; left: 3px;
+  background: var(--text3);
+  transition: all var(--trans);
+  box-shadow: var(--neu-out-sm);
+}
+[data-theme="dark"] .toggle-pill { background: var(--accent); }
+[data-theme="dark"] .toggle-pill::after { left: 19px; background: #fff; }
+
+/* Main wrapper */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+#header {
+  height: var(--header-h);
+  background: var(--bg);
+  box-shadow: var(--neu-out-sm);
+  position: sticky; top: 0; z-index: 90;
+  display: flex; align-items: center;
+  padding: 0 28px; gap: 16px;
+}
+#header h2 { font-family: 'DM Serif Display',serif; font-size: 20px; flex: 1; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 12px;
+  box-shadow: var(--neu-out-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2); transition: all var(--trans);
+}
+.icon-btn:hover { color: var(--accent); box-shadow: var(--neu-in-sm); }
+.icon-btn svg { width: 18px; height: 18px; }
+.user-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px 6px 6px; border-radius: 99px;
+  box-shadow: var(--neu-out-sm); cursor: pointer;
+  transition: all var(--trans); font-size: 13px; font-weight: 600;
+}
+.user-btn:hover { box-shadow: var(--neu-in-sm); }
+.user-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: 12px; font-weight: 700;
+  overflow: hidden; flex-shrink: 0;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.hamburger { display: none; }
+
+/* Content */
+#content {
+  flex: 1; padding: 28px;
+  animation: fadeUp 0.3s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== CARDS ==================== */
+.card {
+  background: var(--bg);
+  box-shadow: var(--neu-out);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.card-sm { border-radius: var(--radius-sm); padding: 14px; }
+
+/* ==================== BUTTONS ==================== */
+.btn-primary {
+  background: var(--grad);
+  color: #fff; font-weight: 600; font-size: 14px;
+  padding: 11px 22px; border-radius: 99px;
+  box-shadow: 0 4px 15px rgba(67,97,238,0.35);
+  transition: all var(--trans); display: inline-flex; align-items: center; gap: 8px;
+  cursor: pointer; border: none; outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(67,97,238,0.45); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(67,97,238,0.3); }
+.btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  color: var(--text2); font-weight: 500; font-size: 14px;
+  padding: 10px 20px; border-radius: 99px;
+  box-shadow: var(--neu-out-sm); background: var(--bg);
+  transition: all var(--trans); display: inline-flex; align-items: center; gap: 8px;
+  cursor: pointer; border: none; outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-secondary:hover { color: var(--text); box-shadow: var(--neu-out); }
+.btn-secondary:active { box-shadow: var(--neu-in-sm); }
+.btn-danger {
+  background: var(--danger); color: #fff; font-weight: 600; font-size: 13px;
+  padding: 8px 16px; border-radius: 99px;
+  transition: all var(--trans); display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  box-shadow: var(--neu-out-sm); display: flex; align-items: center; justify-content: center;
+  color: var(--text2); transition: all var(--trans); flex-shrink: 0;
+}
+.btn-icon:hover { color: var(--accent); box-shadow: var(--neu-in-sm); }
+.btn-icon svg { width: 16px; height: 16px; }
+
+/* ==================== INPUTS ==================== */
+.input {
+  box-shadow: var(--neu-in);
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 14px;
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  transition: box-shadow var(--trans);
+}
+.input:focus { box-shadow: var(--neu-in), 0 0 0 2px rgba(67,97,238,0.2); }
+.input-sm { padding: 8px 12px; font-size: 13px; border-radius: 10px; }
+textarea.input { resize: vertical; min-height: 80px; line-height: 1.6; }
+select.input { cursor: pointer; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-group label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ==================== MODALS ==================== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: var(--neu-out);
+  width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto;
+  padding: 28px;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s var(--spring), opacity 0.2s;
+  opacity: 0;
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); opacity: 1; }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.modal-header h3 { font-size: 20px; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  box-shadow: var(--neu-out-sm); display: flex; align-items: center; justify-content: center;
+  color: var(--text2); cursor: pointer; transition: all var(--trans);
+}
+.modal-close:hover { color: var(--danger); box-shadow: var(--neu-in-sm); }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ==================== PILL TABS ==================== */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 20px;
+  box-shadow: var(--neu-in-sm); border-radius: 99px; padding: 4px;
+  width: fit-content;
+}
+.tab-btn {
+  padding: 8px 18px; border-radius: 99px;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  transition: all var(--trans); cursor: pointer; white-space: nowrap;
+}
+.tab-btn.active {
+  background: var(--grad); color: #fff;
+  box-shadow: 0 2px 10px rgba(67,97,238,0.3);
+}
+
+/* ==================== TOAST ==================== */
+#toast-container {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--text); color: var(--bg);
+  padding: 10px 20px; border-radius: 99px;
+  font-size: 13px; font-weight: 500;
+  animation: toastIn 0.3s var(--spring);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==================== SEARCH OVERLAY ==================== */
+#search-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 120px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+#search-overlay.open { opacity: 1; pointer-events: all; }
+#search-box {
+  background: var(--bg); border-radius: var(--radius);
+  box-shadow: var(--neu-out); width: 100%; max-width: 560px;
+  overflow: hidden;
+  transform: scale(0.95) translateY(-10px);
+  transition: transform 0.25s var(--spring), opacity 0.2s;
+  opacity: 0;
+}
+#search-overlay.open #search-box { transform: scale(1) translateY(0); opacity: 1; }
+#search-input-wrap {
+  display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+  border-bottom: 1px solid var(--bg2);
+}
+#search-input-wrap svg { width: 18px; height: 18px; color: var(--text3); flex-shrink: 0; }
+#search-input {
+  flex: 1; font-size: 16px; font-weight: 500;
+  box-shadow: none; border-radius: 0; padding: 0;
+}
+#search-results { max-height: 380px; overflow-y: auto; padding: 8px; }
+.search-group-title {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 8px 12px 4px;
+}
+.search-result-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 12px; cursor: pointer;
+  transition: all var(--trans);
+}
+.search-result-item:hover, .search-result-item.selected, .search-result-item.search-active {
+  background: var(--bg2);
+  box-shadow: var(--neu-in-sm);
+}
+.search-result-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; color: #fff; flex-shrink: 0;
+}
+.search-result-icon svg { width: 14px; height: 14px; }
+.search-result-text { flex: 1; min-width: 0; }
+.search-result-title { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-result-sub { font-size: 12px; color: var(--text2); }
+.search-hint { padding: 14px 20px; font-size: 12px; color: var(--text3); display: flex; gap: 16px; }
+.search-hint span { display: flex; align-items: center; gap: 4px; }
+kbd { background: var(--bg2); border-radius: 4px; padding: 2px 6px; font-size: 11px; }
+
+/* ==================== LOGIN SCREEN ==================== */
+#login-screen {
+  position: fixed; inset: 0; z-index: 5000;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  background: var(--bg);
+  box-shadow: var(--neu-out);
+  border-radius: 28px;
+  padding: 40px 36px;
+  width: 100%; max-width: 380px;
+  text-align: center;
+}
+.login-logo {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display',serif;
+  color: #fff; font-size: 30px;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 24px rgba(67,97,238,0.35);
+}
+.login-title { font-size: 28px; margin-bottom: 6px; }
+.login-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+.login-form { text-align: left; }
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0; color: var(--text3); font-size: 13px;
+}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--bg2); }
+.btn-google {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 12px 16px; border-radius: 99px;
+  box-shadow: var(--neu-out-sm);
+  background: var(--bg);
+  font-size: 14px; font-weight: 600; color: var(--text);
+  transition: all var(--trans); cursor: pointer;
+  border: none; outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-google:hover { box-shadow: var(--neu-out); transform: translateY(-1px); }
+.btn-google:active { box-shadow: var(--neu-in-sm); transform: translateY(0); }
+.btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-offline {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 11px 16px; border-radius: 99px;
+  box-shadow: var(--neu-out-sm);
+  background: var(--bg);
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  transition: all var(--trans); cursor: pointer;
+  border: none; outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-offline:hover { box-shadow: var(--neu-out); color: var(--text); }
+.btn-offline:active { box-shadow: var(--neu-in-sm); }
+.login-spinner {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.login-switch { margin-top: 16px; font-size: 13px; color: var(--text2); }
+.login-switch a { color: var(--accent); font-weight: 600; cursor: pointer; }
+.login-privacy { margin-top: 20px; font-size: 12px; color: var(--text3); }
+.error-msg {
+  background: rgba(239,68,68,0.1); color: var(--danger);
+  border-radius: 10px; padding: 10px 14px; font-size: 13px;
+  margin-bottom: 14px; display: none;
+}
+.error-msg.show { display: block; }
+
+/* ==================== DASHBOARD ==================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.dashboard-full { grid-column: 1 / -1; }
+.greeting-card { padding: 24px; }
+.greeting-card h1 { font-size: 28px; margin-bottom: 4px; }
+.greeting-card .date { font-size: 14px; color: var(--text2); }
+.greeting-card .quote { font-size: 13px; color: var(--text2); margin-top: 12px; font-style: italic; line-height: 1.6; padding-top: 12px; border-top: 1px solid var(--bg2); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.stat-card { padding: 16px; display: flex; align-items: center; gap: 14px; }
+.stat-icon {
+  width: 44px; height: 44px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.stat-icon svg { width: 22px; height: 22px; }
+.stat-icon.green { background: rgba(16,185,129,0.12); color: var(--success); }
+.stat-icon.red { background: rgba(239,68,68,0.12); color: var(--danger); }
+.stat-icon.blue { background: rgba(67,97,238,0.12); color: var(--accent); }
+.stat-icon.amber { background: rgba(245,158,11,0.12); color: var(--warn); }
+.stat-icon.teal { background: rgba(14,165,233,0.12); color: var(--accent2); }
+.stat-val { font-size: 24px; font-family:'DM Serif Display',serif; }
+.stat-label { font-size: 12px; color: var(--text2); }
+
+/* Progress ring */
+.progress-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.progress-ring-wrap svg { transform: rotate(-90deg); }
+.progress-ring-bg { stroke: var(--bg2); fill: none; stroke-width: 6; }
+.progress-ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; stroke: url(#ring-grad); transition: stroke-dashoffset 0.5s ease; }
+.progress-ring-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--accent); }
+
+/* Focus timer */
+.timer-display {
+  font-family: 'DM Serif Display',serif;
+  font-size: 48px; text-align: center; margin: 10px 0;
+  color: var(--text);
+}
+.timer-modes { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.timer-mode-btn {
+  padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600;
+  color: var(--text2); box-shadow: var(--neu-out-sm); transition: all var(--trans);
+}
+.timer-mode-btn.active { background: var(--grad); color: #fff; box-shadow: none; }
+.timer-controls { display: flex; gap: 10px; justify-content: center; }
+
+/* Weekly chart */
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 80px; }
+.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar {
+  width: 100%; background: var(--bg2); border-radius: 6px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--neu-in-sm);
+}
+.bar-fill {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--grad); border-radius: 6px;
+  transition: height 0.6s ease;
+}
+.bar-label { font-size: 11px; color: var(--text3); }
+
+/* ==================== HABITS ==================== */
+.habit-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  box-shadow: var(--neu-out-sm); margin-bottom: 8px;
+  transition: all var(--trans);
+}
+.habit-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  box-shadow: var(--neu-in-sm); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: all var(--trans);
+}
+.habit-check.done { background: var(--grad); box-shadow: none; }
+.habit-check.done svg { opacity: 1; }
+.habit-check svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
+.habit-streak-dots { display: flex; gap: 4px; margin-top: 4px; }
+.streak-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg2); }
+.streak-dot.done { background: var(--accent); }
+
+/* ==================== TASKS ==================== */
+.task-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  box-shadow: var(--neu-out-sm); margin-bottom: 6px;
+  transition: all var(--trans);
+}
+.task-item.done { opacity: 0.5; }
+.task-item.done .task-name { text-decoration: line-through; }
+.task-check {
+  width: 20px; height: 20px; border-radius: 6px;
+  box-shadow: var(--neu-in-sm); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 1px;
+}
+.task-check.done { background: var(--grad); box-shadow: none; }
+.task-check svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
+.task-check.done svg { opacity: 1; }
+.task-name { font-size: 14px; font-weight: 500; flex: 1; }
+.task-meta { display: flex; gap: 6px; margin-top: 3px; }
+.priority-badge {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+}
+.priority-badge.high { background: rgba(239,68,68,0.12); color: var(--danger); }
+.priority-badge.medium { background: rgba(245,158,11,0.12); color: var(--warn); }
+.priority-badge.low { background: rgba(16,185,129,0.12); color: var(--success); }
+.cat-badge {
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 99px;
+  background: var(--bg2); color: var(--text2);
+}
+
+/* ==================== NOTES ==================== */
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.note-card {
+  background: var(--bg); box-shadow: var(--neu-out); border-radius: var(--radius);
+  overflow: hidden; cursor: pointer; transition: all var(--trans);
+  display: flex; flex-direction: column;
+}
+.note-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12), var(--neu-out); }
+.note-color-bar { height: 4px; }
+.note-body { padding: 14px; flex: 1; }
+.note-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+.note-preview { font-size: 13px; color: var(--text2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.note-footer { padding: 10px 14px; border-top: 1px solid var(--bg2); display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); }
+
+/* Note editor */
+#note-editor {
+  position: fixed; inset: 0; z-index: 800;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  transform: translateY(100%); transition: transform 0.35s var(--spring);
+}
+#note-editor.open { transform: translateY(0); }
+.editor-toolbar {
+  display: flex; align-items: center; gap: 4px; padding: 8px 16px;
+  border-bottom: 1px solid var(--bg2); flex-wrap: wrap;
+}
+.editor-btn {
+  padding: 5px 10px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  color: var(--text2); transition: all var(--trans); box-shadow: var(--neu-out-sm);
+}
+.editor-btn:hover { color: var(--text); }
+.editor-btn.active { box-shadow: var(--neu-in-sm); color: var(--accent); }
+.editor-sep { width: 1px; height: 20px; background: var(--bg2); margin: 0 4px; }
+.menu-item { padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.menu-item:hover { background: var(--bg2); }
+.attach-chip { display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg2);border-radius:99px;font-size:12px;cursor:pointer; }
+.attach-chip:hover { background: var(--accent); color: #fff; }
+.note-content-area {
+  flex: 1; padding: 28px; overflow-y: auto;
+  font-size: 15px; line-height: 1.8;
+  outline: none;
+}
+.note-content-area:focus { outline: none; }
+
+/* ==================== BRAIN DUMP ==================== */
+.dump-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  box-shadow: var(--neu-out-sm); margin-bottom: 8px;
+  transition: all var(--trans);
+}
+.dump-item.done .dump-text { text-decoration: line-through; color: var(--text3); }
+.tag-pill {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+  cursor: pointer; transition: all var(--trans); flex-shrink: 0;
+}
+.tag-idea { background: rgba(14,165,233,0.12); color: var(--accent2); }
+.tag-todo { background: rgba(67,97,238,0.12); color: var(--accent); }
+.tag-question { background: rgba(245,158,11,0.12); color: var(--warn); }
+.tag-feeling { background: rgba(239,68,68,0.12); color: var(--danger); }
+.tag-random { background: rgba(16,185,129,0.12); color: var(--success); }
+
+/* ==================== CALENDAR ==================== */
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
+}
+.cal-header { text-align: center; font-size: 12px; font-weight: 700; color: var(--text3); padding: 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.cal-day {
+  min-height: 88px; border-radius: 12px; padding: 6px;
+  cursor: pointer; transition: all var(--trans); position: relative;
+  box-shadow: var(--neu-out-sm);
+}
+.cal-day:hover { box-shadow: var(--neu-out); }
+.cal-day.today .day-num { background: var(--grad); color: #fff; border-radius: 50%; }
+.cal-day.other-month .day-num { color: var(--text3); }
+.cal-day.selected { box-shadow: var(--neu-in); }
+.day-num { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; border-radius: 50%; }
+.cal-event { font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Event colors */
+.ev-green { background: rgba(16,185,129,0.15); color: #059669; }
+.ev-blue { background: rgba(67,97,238,0.15); color: var(--accent); }
+.ev-amber { background: rgba(245,158,11,0.15); color: #d97706; }
+.ev-red { background: rgba(239,68,68,0.15); color: #dc2626; }
+.ev-teal { background: rgba(14,165,233,0.15); color: #0284c7; }
+
+/* ==================== WORKOUT ==================== */
+.exercise-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  box-shadow: var(--neu-out-sm); margin-bottom: 6px;
+  cursor: grab;
+}
+.exercise-item:active { cursor: grabbing; }
+.drag-handle { color: var(--text3); cursor: grab; flex-shrink: 0; }
+.drag-handle svg { width: 16px; height: 16px; }
+.exercise-item.drag-over { box-shadow: var(--neu-in); opacity: 0.8; }
+
+/* Toggle switch */
+.toggle-wrap {
+  width: 36px; height: 20px; border-radius: 99px;
+  background: var(--bg2); box-shadow: var(--neu-in-sm);
+  position: relative; cursor: pointer; transition: background var(--trans);
+  flex-shrink: 0;
+}
+.toggle-wrap.on { background: var(--accent); box-shadow: none; }
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--text3); transition: all var(--trans);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-wrap.on .toggle-knob { left: 19px; background: #fff; }
+
+/* Dump connected badge */
+.dump-connected-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  background: var(--accent)18; padding: 2px 8px; border-radius: 99px;
+  cursor: pointer; transition: opacity var(--trans);
+}
+.dump-connected-badge:hover { opacity: 0.75; }
+
+/* ==================== DIARY ==================== */
+#diary-pin-screen {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px; padding: 40px; text-align: center;
+}
+.pin-dots { display: flex; gap: 12px; justify-content: center; margin: 16px 0; }
+.pin-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: var(--neu-in-sm); transition: all var(--trans); }
+.pin-dot.filled { background: var(--grad); box-shadow: none; }
+.pin-pad { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; max-width: 220px; margin: 0 auto; }
+.pin-btn {
+  aspect-ratio: 1; border-radius: var(--radius-sm); font-size: 20px; font-weight: 700;
+  box-shadow: var(--neu-out-sm); transition: all var(--trans);
+}
+.pin-btn:active { box-shadow: var(--neu-in-sm); }
+
+/* ==================== BIBLE ==================== */
+.soap-section { margin-bottom: 12px; }
+.soap-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 4px;
+}
+.verse-card {
+  background: var(--grad); border-radius: var(--radius); padding: 20px; color: #fff;
+  box-shadow: 0 6px 24px rgba(67,97,238,0.3);
+}
+.verse-text { font-family: 'DM Serif Display',serif; font-size: 18px; line-height: 1.6; margin-bottom: 8px; }
+.verse-ref { font-size: 13px; opacity: 0.8; }
+
+/* ==================== MONEY ==================== */
+.money-stat {
+  text-align: center; padding: 16px;
+}
+.money-amount { font-family: 'DM Serif Display',serif; font-size: 26px; }
+.money-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.budget-bar-wrap { margin-bottom: 10px; }
+.budget-bar { height: 8px; border-radius: 99px; box-shadow: var(--neu-in-sm); overflow: hidden; margin-top: 4px; }
+.budget-bar-fill { height: 100%; border-radius: 99px; background: var(--grad); transition: width 0.5s ease; }
+.budget-bar-fill.over { background: linear-gradient(135deg, var(--danger), #f97316); }
+.wishlist-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px;
+}
+.badge-need { background: rgba(239,68,68,0.12); color: var(--danger); }
+.badge-want { background: rgba(245,158,11,0.12); color: var(--warn); }
+.debt-badge-owe { background: rgba(239,68,68,0.1); color: var(--danger); padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.debt-badge-owed { background: rgba(16,185,129,0.1); color: var(--success); padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.savings-bar { height: 10px; border-radius: 99px; box-shadow: var(--neu-in-sm); overflow: hidden; margin: 8px 0; }
+.savings-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(135deg, var(--success), var(--accent2)); }
+
+/* ==================== SCHEDULE ==================== */
+.timetable-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 8px; }
+.timetable-header { font-size: 12px; font-weight: 700; text-align: center; color: var(--text2); padding: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.timetable-cell { min-height: 60px; border-radius: 10px; padding: 6px; box-shadow: var(--neu-in-sm); }
+.sched-block { background: var(--grad); border-radius: 8px; padding: 6px 8px; color: #fff; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.empty-icon { color: var(--text3); opacity: 0.5; }
+.empty-icon svg { width: 48px; height: 48px; }
+.empty-title { font-size: 16px; font-weight: 600; color: var(--text2); }
+.empty-sub { font-size: 13px; color: var(--text3); }
+
+/* ==================== PLAN VIEWS ==================== */
+.plan-block {
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  box-shadow: var(--neu-out-sm); margin-bottom: 8px;
+  border-left: 3px solid var(--accent);
+}
+.plan-time { font-size: 12px; color: var(--text3); font-weight: 600; }
+.plan-title { font-size: 14px; font-weight: 600; }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  #sidebar {
+    transform: translateX(calc(-1 * var(--sidebar-w)));
+    box-shadow: none;
+  }
+  #sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  #main { margin-left: 0; }
+  .hamburger { display: flex; }
+  #content { padding: 16px; }
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .notes-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); }
+  .cal-grid { font-size: 11px; }
+  .cal-day { min-height: 60px; }
+  .modal { padding: 20px; }
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal { border-radius: 24px 24px 0 0; max-height: 85vh; }
+}
+@media (max-width: 400px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .tab-bar { flex-wrap: wrap; border-radius: var(--radius-sm); }
+}
+</style>
+</head>
+<body>
+<!-- SVG Gradient defs (hidden) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4361EE"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Search Overlay -->
+<div id="search-overlay">
+  <div id="search-box">
+    <div id="search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Search tasks, notes, habits…" autocomplete="off"/>
+      <button onclick="closeSearch()" class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="search-results"></div>
+    <div class="search-hint">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> select</span>
+      <span><kbd>Esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">JC</div>
+    <h1 class="login-title">Personal Space</h1>
+    <p class="login-sub">Sign in to sync across devices</p>
+    <div id="firebase-status" style="font-size:12px;text-align:center;margin-bottom:10px;min-height:18px"></div>
+    <div id="login-error" class="error-msg"></div>
+    <!-- Login form -->
+    <div id="login-form-wrap" class="login-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" class="input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')emailSignIn()"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" class="input" placeholder="••••••••" onkeydown="if(event.key==='Enter')emailSignIn()"/>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="emailSignIn()">Sign In</button>
+      <div class="divider">OR</div>
+      <button class="btn-google" onclick="googleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.5 1.2 8.9 3.2l6.6-6.6C35.7 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.7 6c1.8-5.4 6.9-9.8 13.3-9.8z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v8.7h12.4c-.5 2.8-2.2 5.2-4.6 6.8l7.2 5.6c4.2-3.9 6.6-9.6 6.6-16.5z"/><path fill="#FBBC05" d="M10.7 28.6A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.7-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l8.1-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.2-5.6c-2 1.4-4.6 2.1-8 2.1-6.4 0-11.5-4.3-13.3-10l-8.1 6.1C6.9 42.6 14.8 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+      <p class="login-switch">New here? <a onclick="showSignUp()">Create account</a></p>
+      <div class="divider">OR</div>
+      <button class="btn-offline" onclick="offlineMode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Use Without Account (Offline)
+      </button>
+    </div>
+    <!-- Sign-up form -->
+    <div id="signup-form-wrap" class="login-form" style="display:none">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="signup-name" class="input" placeholder="James Clark"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" class="input" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-pass" class="input" placeholder="Min. 6 characters" onkeydown="if(event.key==='Enter')emailSignUp()"/>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center" onclick="emailSignUp()">Create Account</button>
+      <button class="btn-offline" style="margin-top:8px" onclick="offlineMode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Use Without Account (Offline)
+      </button>
+      <p class="login-switch">Already have an account? <a onclick="showLogin()">Sign in</a></p>
+    </div>
+    <p class="login-privacy">🔒 Your data is private and encrypted</p>
+  </div>
+</div>
+
+<!-- App Shell -->
+<div id="app" style="display:none">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">JC</div>
+      <div class="logo-text"><span>James Clark</span>Personal Space</div>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item"><a href="#" onclick="nav('dashboard')" id="nav-dashboard" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> Dashboard
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('calendar')" id="nav-calendar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Calendar
+        <span class="nav-badge" id="cal-badge" style="display:none">0</span>
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('habits')" id="nav-habits">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Habits
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('notes')" id="nav-notes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg> Notes
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('braindump')" id="nav-braindump">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Brain Dump
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('workout')" id="nav-workout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 17.5h11M5 12h14"/><circle cx="3" cy="6.5" r="1.5"/><circle cx="21" cy="6.5" r="1.5"/><circle cx="3" cy="17.5" r="1.5"/><circle cx="21" cy="17.5" r="1.5"/></svg> Workout
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('diary')" id="nav-diary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Diary 🔒
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('bible')" id="nav-bible">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Bible ✝
+      </a></li>
+      <li class="nav-item"><a href="#" onclick="nav('money')" id="nav-money">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Money 💰
+      </a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <span style="font-size:13px">Dark Mode</span>
+        <div class="toggle-pill"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div id="main">
+    <!-- Header -->
+    <header id="header">
+      <button class="icon-btn hamburger" id="hamburger-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h2 id="page-title">Dashboard</h2>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="icon-btn" onclick="nav('calendar')" title="Add Event">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </button>
+        <div class="user-btn" id="user-btn" onclick="signOutUser()">
+          <div class="user-avatar" id="user-avatar">JC</div>
+          <span id="user-name">James Clark</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content area -->
+    <div id="content"></div>
+  </div>
+</div>
+
+<!-- Note Editor -->
+<div id="note-editor">
+  <div style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bg2);gap:10px">
+    <button class="btn-secondary" onclick="closeNoteEditor()">← Back</button>
+    <input type="text" id="note-title-input" class="input" placeholder="Note title…" style="flex:1;font-size:16px;font-weight:700"/>
+    <select id="note-color-select" class="input" style="width:120px">
+      <option value="#4361EE">Blue</option>
+      <option value="#0EA5E9">Teal</option>
+      <option value="#10B981">Green</option>
+      <option value="#F59E0B">Amber</option>
+      <option value="#EF4444">Red</option>
+      <option value="#8B5CF6">Purple</option>
+    </select>
+    <button class="btn-icon" id="note-pin-btn" onclick="toggleNotePin()" title="Pin note" style="font-size:16px">📌</button>
+    <label class="btn-secondary" style="cursor:pointer;padding:6px 12px;font-size:13px" title="Attach file">
+      📎 Attach
+      <input type="file" id="note-attach-input" style="display:none" onchange="attachFileToNote(this)" accept="image/*,.pdf,.txt,.doc,.docx">
+    </label>
+    <button class="btn-primary" onclick="saveNote()">Save</button>
+  </div>
+  <!-- Menu bar -->
+  <div style="display:flex;align-items:center;padding:4px 16px;border-bottom:1px solid var(--bg2);gap:4px;font-size:13px">
+    <div style="position:relative;display:inline-block">
+      <button class="editor-btn" onclick="toggleMenu('insert-menu')">Insert ▾</button>
+      <div id="insert-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg);box-shadow:var(--neu-out);border-radius:10px;padding:6px;z-index:200;min-width:140px">
+        <div class="menu-item" onclick="fmt('insertHorizontalRule');closeMenus()">Horizontal Line</div>
+        <div class="menu-item" onclick="fmt('insertHTML','<br><br>');closeMenus()">Line Break</div>
+        <div class="menu-item" onclick="insertNoteTable();closeMenus()">Table 2×2</div>
+        <div class="menu-item" onclick="fmt('insertHTML','<code style=\'background:var(--bg2);padding:2px 6px;border-radius:4px;font-family:monospace\'>code</code>');closeMenus()">Inline Code</div>
+      </div>
+    </div>
+    <div style="position:relative;display:inline-block">
+      <button class="editor-btn" onclick="toggleMenu('format-menu')">Format ▾</button>
+      <div id="format-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg);box-shadow:var(--neu-out);border-radius:10px;padding:6px;z-index:200;min-width:140px">
+        <div class="menu-item" onclick="fmt('bold');closeMenus()"><b>Bold</b></div>
+        <div class="menu-item" onclick="fmt('italic');closeMenus()"><i>Italic</i></div>
+        <div class="menu-item" onclick="fmt('underline');closeMenus()"><u>Underline</u></div>
+        <div class="menu-item" onclick="fmt('strikeThrough');closeMenus()"><s>Strikethrough</s></div>
+        <div class="menu-item" onclick="fmt('removeFormat');closeMenus()">Clear Formatting</div>
+      </div>
+    </div>
+    <div style="position:relative;display:inline-block">
+      <button class="editor-btn" onclick="toggleMenu('view-menu')">View ▾</button>
+      <div id="view-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--bg);box-shadow:var(--neu-out);border-radius:10px;padding:6px;z-index:200;min-width:160px">
+        <div class="menu-item" id="focus-mode-item" onclick="toggleFocusMode();closeMenus()">Focus Mode</div>
+        <div class="menu-item" onclick="printNote();closeMenus()">Print / Export</div>
+        <div class="menu-item" onclick="showWordCount();closeMenus()">Word Count</div>
+      </div>
+    </div>
+    <div style="flex:1"></div>
+    <span id="note-wordcount" style="color:var(--text3);font-size:12px"></span>
+  </div>
+  <div class="editor-toolbar" id="note-toolbar">
+    <button class="editor-btn" onclick="fmt('bold')"><b>B</b></button>
+    <button class="editor-btn" onclick="fmt('italic')"><i>I</i></button>
+    <button class="editor-btn" onclick="fmt('underline')"><u>U</u></button>
+    <div class="editor-sep"></div>
+    <button class="editor-btn" onclick="fmt('formatBlock','h1')">H1</button>
+    <button class="editor-btn" onclick="fmt('formatBlock','h2')">H2</button>
+    <button class="editor-btn" onclick="fmt('formatBlock','h3')">H3</button>
+    <button class="editor-btn" onclick="fmt('formatBlock','p')">P</button>
+    <div class="editor-sep"></div>
+    <button class="editor-btn" onclick="fmt('insertUnorderedList')">• List</button>
+    <button class="editor-btn" onclick="fmt('insertOrderedList')">1. List</button>
+    <div class="editor-sep"></div>
+    <button class="editor-btn" onclick="fmt('justifyLeft')">⫷</button>
+    <button class="editor-btn" onclick="fmt('justifyCenter')">≡</button>
+    <button class="editor-btn" onclick="fmt('justifyRight')">⫸</button>
+  </div>
+  <div id="note-attachments-bar" style="display:none;padding:8px 16px;border-bottom:1px solid var(--bg2);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:12px;color:var(--text3)">Attachments:</span>
+  </div>
+  <div id="note-content-area" class="note-content-area" contenteditable="true" spellcheck="true" oninput="updateNoteWordCount()"></div>
+</div>
+
+<!-- Diary Editor (reuses note editor styling) -->
+<div id="diary-editor" style="position:fixed;inset:0;z-index:800;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s var(--spring)">
+  <div style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bg2);gap:10px">
+    <button class="btn-secondary" onclick="closeDiaryEditor()">← Back</button>
+    <div style="flex:1">
+      <div id="diary-entry-date" style="font-size:13px;color:var(--text2)"></div>
+    </div>
+    <select id="diary-mood" class="input" style="width:130px">
+      <option value="😊">😊 Happy</option>
+      <option value="😌">😌 Calm</option>
+      <option value="😔">😔 Sad</option>
+      <option value="😤">😤 Frustrated</option>
+      <option value="😰">😰 Anxious</option>
+      <option value="🤩">🤩 Excited</option>
+      <option value="😴">😴 Tired</option>
+    </select>
+    <button class="btn-primary" onclick="saveDiaryEntry()">Save</button>
+  </div>
+  <div class="editor-toolbar">
+    <button class="editor-btn" onclick="dfmt('bold')"><b>B</b></button>
+    <button class="editor-btn" onclick="dfmt('italic')"><i>I</i></button>
+    <button class="editor-btn" onclick="dfmt('underline')"><u>U</u></button>
+    <div class="editor-sep"></div>
+    <button class="editor-btn" onclick="dfmt('formatBlock','h2')">H2</button>
+    <button class="editor-btn" onclick="dfmt('insertUnorderedList')">• List</button>
+    <button class="editor-btn" onclick="dfmt('insertOrderedList')">1. List</button>
+  </div>
+  <div id="diary-content-area" class="note-content-area" contenteditable="true" style="flex:1"></div>
+</div>
+
+<script>
+// ==================== DATA & UTILS ====================
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const fmtDate = d => { const dt = new Date(d); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
+const fmtDateFull = d => new Date(d).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const today = () => new Date().toISOString().split('T')[0];
+const dayOfYear = () => { const n = new Date(); return Math.floor((n - new Date(n.getFullYear(),0,0)) / 86400000); };
+
+// Data stores
+let D = {
+  tasks: [], dumps: [], notes: [], routines: [], wkt: [], habits: [], hlogs: [],
+  diary: [], todo: [], money: { expenses:[], budget:[], wishlist:[], debt:[], savings:[], income:[] },
+  sched: { college:[], tesda:[] },
+  plan: { daily:{}, weekly:{}, monthly:{} },
+  bible: { soap:[], prayer:[], checklist:{} },
+  dark: false, ts: 0, seeded: false,
+  events: [], lists: [], listItems: [], diaryPin: '1234'
+};
+
+function loadData() {
+  const keys = ['tasks','dumps','notes','routines','wkt','habits','hlogs','diary','todo','money','sched','plan','bible','dark','ts','seeded','events','lists','listItems','diaryPin','dumpAutoClear','dumpLastClear'];
+  keys.forEach(k => {
+    const v = localStorage.getItem('jc_'+k);
+    if (v !== null) {
+      try { D[k] = JSON.parse(v); } catch(e) { D[k] = v; }
+    }
+  });
+  if (D.dark) document.documentElement.setAttribute('data-theme','dark');
+}
+
+function save(msg) {
+  const keys = ['tasks','dumps','notes','routines','wkt','habits','hlogs','diary','todo','money','sched','plan','bible','dark','events','lists','listItems','diaryPin','dumpAutoClear','dumpLastClear'];
+  D.ts = Date.now();
+  localStorage.setItem('jc_ts', D.ts);
+  keys.forEach(k => localStorage.setItem('jc_'+k, JSON.stringify(D[k])));
+  if (msg) toast(msg);
+  clearTimeout(save._t);
+  save._t = setTimeout(cloudSave, 3000);
+}
+
+// ==================== FIREBASE CLOUD ====================
+let fbAuth = null, fbDb = null, fbUser = null;
+let cloudSave = () => {};
+
+function initFirebase() {
+  // Firebase config - replace with your config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY';
+
+  // Always show login screen first — never skip it
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+
+  // Show offline notice if Firebase not set up
+  if (typeof firebase === 'undefined' || !isConfigured) {
+    document.getElementById('firebase-status').innerHTML =
+      '<span style="color:var(--warn)">⚠️ Firebase not configured — <a onclick="offlineMode()" style="color:var(--accent);cursor:pointer;font-weight:700">Continue offline</a></span>';
+    return;
+  }
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    fbAuth = firebase.auth();
+    fbDb = firebase.firestore();
+  } catch(e) {
+    document.getElementById('firebase-status').innerHTML =
+      '<span style="color:var(--danger)">Firebase error: ' + e.message + '</span>';
+    return;
+  }
+
+  cloudSave = async () => {
+    if (!fbUser || !fbDb) return;
+    const data = {};
+    ['tasks','dumps','notes','routines','wkt','habits','hlogs','diary','todo','money','sched','plan','bible','events','lists','listItems','diaryPin','dumpAutoClear','dumpLastClear'].forEach(k => data[k] = D[k]);
+    data._ts = D.ts;
+    try { await fbDb.collection('users').doc(fbUser.uid).set(data); } catch(e) { console.error(e); }
+  };
+
+  fbAuth.onAuthStateChanged(async user => {
+    if (user) {
+      fbUser = user;
+      updateUserUI(user);
+      try {
+        const doc = await fbDb.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          const cloud = doc.data();
+          const localTs = D.ts || 0;
+          const cloudTs = cloud._ts || 0;
+          if (cloudTs > localTs && !localTs) {
+            Object.keys(cloud).forEach(k => { if(k !== '_ts') D[k] = cloud[k]; });
+            save();
+            if (!sessionStorage.getItem('jc_reloaded')) {
+              sessionStorage.setItem('jc_reloaded','1');
+              location.reload();
+              return;
+            }
+          } else if (localTs > 0) {
+            cloudSave();
+          }
+        }
+      } catch(e) { console.error(e); }
+      showApp();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  });
+}
+
+function updateUserUI(user) {
+  document.getElementById('user-name').textContent = user.displayName || user.email?.split('@')[0] || 'James';
+  const av = document.getElementById('user-avatar');
+  if (user.photoURL) av.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
+  else av.textContent = (user.displayName || 'JC')[0].toUpperCase();
+}
+
+function setLoginLoading(btn, loading, originalText) {
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.style.opacity = loading ? '0.7' : '1';
+  if (loading) btn.setAttribute('data-orig', btn.innerHTML);
+  else btn.innerHTML = btn.getAttribute('data-orig') || originalText || btn.innerHTML;
+  if (loading) btn.innerHTML = '<span class="login-spinner"></span> Please wait…';
+}
+
+async function googleSignIn() {
+  if (!fbAuth) {
+    showError('Firebase is not configured. Use "Continue offline" below, or set up your Firebase config.');
+    return;
+  }
+  const btn = document.querySelector('.btn-google');
+  setLoginLoading(btn, true);
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await fbAuth.signInWithPopup(provider);
+  } catch(e) {
+    setLoginLoading(btn, false);
+    const msg = e.code === 'auth/popup-blocked'
+      ? 'Popup was blocked — please allow popups for this page and try again.'
+      : e.code === 'auth/unauthorized-domain'
+      ? 'This domain is not authorized in Firebase. Add it under Authentication → Authorized Domains.'
+      : e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-closed-by-user'
+      ? 'Sign-in cancelled.'
+      : e.message;
+    showError(msg);
+  }
+}
+
+async function emailSignIn() {
+  if (!fbAuth) {
+    showError('Firebase is not configured. Use "Continue offline" below, or set up your Firebase config.');
+    return;
+  }
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { showError('Please enter your email and password.'); return; }
+  const btn = document.querySelector('#login-form-wrap .btn-primary');
+  setLoginLoading(btn, true);
+  try {
+    await fbAuth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    setLoginLoading(btn, false);
+    const msg = e.code === 'auth/user-not-found' ? 'No account found with this email.'
+      : e.code === 'auth/wrong-password' ? 'Incorrect password.'
+      : e.code === 'auth/invalid-email' ? 'Invalid email address.'
+      : e.code === 'auth/too-many-requests' ? 'Too many attempts — try again later.'
+      : e.message;
+    showError(msg);
+  }
+}
+
+async function emailSignUp() {
+  if (!fbAuth) {
+    showError('Firebase is not configured. Use "Continue offline" below, or set up your Firebase config.');
+    return;
+  }
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-pass').value;
+  if (!name || !email || !pass) { showError('Please fill in all fields.'); return; }
+  if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
+  const btn = document.querySelector('#signup-form-wrap .btn-primary');
+  setLoginLoading(btn, true);
+  try {
+    const cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: name });
+  } catch(e) {
+    setLoginLoading(btn, false);
+    const msg = e.code === 'auth/email-already-in-use' ? 'An account with this email already exists.'
+      : e.code === 'auth/invalid-email' ? 'Invalid email address.'
+      : e.code === 'auth/weak-password' ? 'Password is too weak — use at least 6 characters.'
+      : e.message;
+    showError(msg);
+  }
+}
+
+async function signOutUser() {
+  if (!fbAuth) {
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('app').style.display='none';
+    return;
+  }
+  await fbAuth.signOut();
+  toast('Signed out');
+}
+
+function offlineMode() {
+  fbUser = { uid:'local', displayName:'James Clark', email:'james@local' };
+  updateUserUI(fbUser);
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  nav('dashboard');
+}
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.classList.add('show');
+}
+function clearError() {
+  const el = document.getElementById('login-error');
+  if (el) { el.textContent=''; el.classList.remove('show'); }
+}
+function showSignUp() {
+  clearError();
+  document.getElementById('login-form-wrap').style.display='none';
+  document.getElementById('signup-form-wrap').style.display='block';
+}
+function showLogin() {
+  clearError();
+  document.getElementById('signup-form-wrap').style.display='none';
+  document.getElementById('login-form-wrap').style.display='block';
+}
+
+// ==================== NAVIGATION ====================
+let currentPage = 'dashboard';
+const pageTitles = { dashboard:'Dashboard', calendar:'Calendar', habits:'Habits', notes:'Notes', braindump:'Brain Dump', workout:'Workout', diary:'Diary', bible:'Bible', money:'Money' };
+
+function nav(page, skipHistory) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('nav-'+page);
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[page] || page;
+  const content = document.getElementById('content');
+  content.style.animation = 'none'; content.offsetHeight;
+  content.style.animation = 'fadeUp 0.3s ease';
+  renderPage(page);
+  // Close sidebar on mobile
+  if (window.innerWidth <= 700) document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderPage(page) {
+  const fns = { dashboard:renderDashboard, calendar:renderCalendar, habits:renderHabits, notes:renderNotes, braindump:renderBrainDump, workout:renderWorkout, diary:renderDiary, bible:renderBible, money:renderMoney };
+  if (fns[page]) fns[page]();
+}
+
+// ==================== TOAST ====================
+function toast(msg, dur=2500) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(10px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); }, dur);
+}
+
+// ==================== THEME ====================
+function toggleTheme() {
+  D.dark = !D.dark;
+  document.documentElement.setAttribute('data-theme', D.dark ? 'dark' : 'light');
+  save();
+}
+
+// ==================== SIDEBAR ====================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ==================== SEARCH ====================
+let searchIdx = -1;
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('search-input').focus(),100);
+  renderSearchResults('');
+}
+function closeSearch() {
+  document.getElementById('search-overlay').classList.remove('open');
+  document.getElementById('search-input').value = '';
+}
+function renderSearchResults(q) {
+  const el = document.getElementById('search-results');
+  if (!q.trim()) { el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">Start typing to search…</div>'; return; }
+  q = q.toLowerCase();
+  let html = '';
+  // Tasks
+  const tasks = (D.tasks||[]).filter(t=>t.name?.toLowerCase().includes(q));
+  if (tasks.length) {
+    html += `<div class="search-group-title">Tasks</div>`;
+    tasks.slice(0,4).forEach(t => {
+      html += `<div class="search-result-item" onclick="closeSearch();nav('calendar')">
+        <div class="search-result-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 11l3 3L22 4"/></svg></div>
+        <div class="search-result-text"><div class="search-result-title">${t.name}</div><div class="search-result-sub">Task · ${t.priority||'medium'} priority</div></div>
+      </div>`;
+    });
+  }
+  // Notes
+  const notes = (D.notes||[]).filter(n=>n.title?.toLowerCase().includes(q)||n.content?.toLowerCase().includes(q));
+  if (notes.length) {
+    html += `<div class="search-group-title">Notes</div>`;
+    notes.slice(0,3).forEach(n => {
+      html += `<div class="search-result-item" onclick="closeSearch();nav('notes');openNoteEditor('${n.id}')">
+        <div class="search-result-icon" style="background:${n.color||'var(--grad)'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+        <div class="search-result-text"><div class="search-result-title">${n.title||'Untitled'}</div><div class="search-result-sub">Note</div></div>
+      </div>`;
+    });
+  }
+  // Dumps
+  const dumps = (D.dumps||[]).filter(d=>d.text?.toLowerCase().includes(q));
+  if (dumps.length) {
+    html += `<div class="search-group-title">Brain Dump</div>`;
+    dumps.slice(0,3).forEach(d => {
+      html += `<div class="search-result-item" onclick="closeSearch();nav('braindump')">
+        <div class="search-result-icon" style="background:linear-gradient(135deg,var(--warn),#f97316)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="search-result-text"><div class="search-result-title">${d.text?.slice(0,60)||'...'}</div><div class="search-result-sub">Brain Dump · ${d.tag||'random'}</div></div>
+      </div>`;
+    });
+  }
+  // Habits
+  const habits = (D.habits||[]).filter(h=>h.name?.toLowerCase().includes(q));
+  if (habits.length) {
+    html += `<div class="search-group-title">Habits</div>`;
+    habits.slice(0,3).forEach(h => {
+      html += `<div class="search-result-item" onclick="closeSearch();nav('habits')">
+        <div class="search-result-icon" style="background:linear-gradient(135deg,var(--success),var(--accent2))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 11l3 3L22 4"/></svg></div>
+        <div class="search-result-text"><div class="search-result-title">${h.name}</div><div class="search-result-sub">Habit</div></div>
+      </div>`;
+    });
+  }
+  if (!html) html = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No results found</div>';
+  el.innerHTML = html;
+}
+document.getElementById('search-input').addEventListener('input', e => { searchIdx=-1; renderSearchResults(e.target.value); });
+document.getElementById('search-input').addEventListener('keydown', e => {
+  const items = document.querySelectorAll('.search-result-item');
+  if (!items.length) return;
+  if (e.key==='ArrowDown') {
+    e.preventDefault();
+    searchIdx = Math.min(searchIdx+1, items.length-1);
+    items.forEach((el,i) => el.classList.toggle('search-active', i===searchIdx));
+    items[searchIdx]?.scrollIntoView({block:'nearest'});
+  } else if (e.key==='ArrowUp') {
+    e.preventDefault();
+    searchIdx = Math.max(searchIdx-1, 0);
+    items.forEach((el,i) => el.classList.toggle('search-active', i===searchIdx));
+    items[searchIdx]?.scrollIntoView({block:'nearest'});
+  } else if (e.key==='Enter' && searchIdx>=0) {
+    e.preventDefault();
+    items[searchIdx]?.click();
+  }
+});
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); openSearch(); }
+  if (e.key==='Escape') closeSearch();
+});
+
+// ==================== MODALS ====================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ==================== QUOTES ====================
+const QUOTES = [
+  "The secret of getting ahead is getting started. — Mark Twain",
+  "Do it now. Sometimes 'later' becomes 'never'.",
+  "Success is not final; failure is not fatal. — Churchill",
+  "Push yourself, because no one else is going to do it for you.",
+  "Great things never come from comfort zones.",
+  "Dream it. Believe it. Build it.",
+  "Stay foolish to stay sane. — Maxime Lagacé",
+  "Good things take time.",
+  "Don't stop when you're tired. Stop when you're done.",
+  "Wake up with determination, go to bed with satisfaction.",
+  "Commit to being excellent.",
+  "Every day is a chance to be better.",
+  "Focus on progress, not perfection.",
+  "You are capable of more than you know.",
+  "Make each day your masterpiece. — John Wooden",
+  "Difficult roads often lead to beautiful destinations.",
+  "Keep going. Everything you need will come to you.",
+  "Believe in yourself and all that you are.",
+  "The harder you work, the luckier you get.",
+  "Don't watch the clock; do what it does. Keep going.",
+  "Action is the foundational key to all success.",
+  "Opportunities don't happen. You create them.",
+  "Start where you are. Use what you have. Do what you can.",
+  "The only way to do great work is to love what you do.",
+  "It always seems impossible until it's done. — Mandela",
+  "Your limitation—it's only your imagination.",
+  "Sometimes later becomes never. Do it now.",
+  "Dream bigger. Do bigger.",
+  "Little things make big days.",
+  "It's going to be hard, but hard is not impossible.",
+];
+
+// ==================== DASHBOARD ====================
+let timerInterval = null;
+let timerLeft = 25 * 60;
+let timerRunning = false;
+let timerMode = 25;
+
+function renderDashboard() {
+  const todayStr = today();
+  const todayTasks = (D.tasks||[]).filter(t => t.date === todayStr);
+  const doneTasks = todayTasks.filter(t => t.done).length;
+  const highPrio = (D.tasks||[]).filter(t => !t.done && t.priority === 'high');
+  const todayHabits = D.habits || [];
+  const hlog = (D.hlogs||[]).find(l => l.date === todayStr);
+  const doneHabits = hlog ? (hlog.done||[]) : [];
+  const q = QUOTES[dayOfYear() % QUOTES.length];
+  const now = new Date();
+  const hour = now.getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const dateStr = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  
+  // Today's bible
+  const bibleVerse = getBibleVerse();
+  const bibleCheck = D.bible?.checklist?.[todayStr] || {};
+  const bibleStreak = calcBibleStreak();
+  
+  // Today's classes
+  const dayNames = ['sun','mon','tue','wed','thu','fri','sat'];
+  const dayKey = dayNames[now.getDay()];
+  const todayClasses = [...((D.sched?.college||[]).filter(c=>c.days?.includes(dayKey))), ...((D.sched?.tesda||[]).filter(c=>c.days?.includes(dayKey)))];
+  
+  // Weekly chart data
+  const weekData = getWeekChart();
+  const ringPct = todayTasks.length ? Math.round(doneTasks/todayTasks.length*100) : 0;
+  const circ = 2*Math.PI*35;
+  const ringOffset = circ - (circ * ringPct / 100);
+  
+  document.getElementById('content').innerHTML = `
+    <div class="dashboard-grid">
+      <!-- Greeting -->
+      <div class="card greeting-card dashboard-full" style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap">
+        <div style="flex:1">
+          <h1>${greet}, James! 👋</h1>
+          <div class="date">${dateStr}</div>
+          <div class="quote">"${q}"</div>
+        </div>
+        <button class="btn-primary" onclick="openPriorityModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4l3 3"/></svg>
+          Priority View
+        </button>
+      </div>
+      
+      <!-- Stats -->
+      <div class="dashboard-full">
+        <div class="stat-grid">
+          <div class="card stat-card">
+            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div><div class="stat-val">${todayTasks.length}</div><div class="stat-label">Today's Tasks</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div><div class="stat-val">${highPrio.length}</div><div class="stat-label">High Priority</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+            <div><div class="stat-val">${(D.notes||[]).length}</div><div class="stat-label">Notes</div></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
+            <div><div class="stat-val">${(D.dumps||[]).filter(d=>!d.done).length}</div><div class="stat-label">Brain Dump</div></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Today's Tasks + Ring -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3>Today's Tasks</h3>
+          <div class="progress-ring-wrap">
+            <svg width="80" height="80">
+              <circle class="progress-ring-bg" cx="40" cy="40" r="35"/>
+              <circle class="progress-ring-fill" cx="40" cy="40" r="35" stroke-dasharray="${circ}" stroke-dashoffset="${ringOffset}"/>
+            </svg>
+            <div class="progress-ring-text">${ringPct}%</div>
+          </div>
+        </div>
+        ${todayTasks.length ? todayTasks.map(t=>`
+          <div class="task-item${t.done?' done':''}">
+            <div class="task-check${t.done?' done':''}" onclick="toggleTask('${t.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="task-name">${t.name}</div>
+              <div class="task-meta">
+                <span class="priority-badge ${t.priority||'medium'}">${t.priority||'medium'}</span>
+                ${t.category?`<span class="cat-badge">${t.category}</span>`:''}
+              </div>
+            </div>
+          </div>`).join('') : `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><path d="M9 11l3 3L22 4"/></svg></div><p class="empty-title">No tasks today</p><button class="btn-primary" onclick="nav('calendar')">Add Task</button></div>`}
+      </div>
+      
+      <!-- Quick Capture -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Quick Capture</h3>
+        <textarea class="input" id="quick-dump" placeholder="What's on your mind? Dump it here…" rows="3"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          ${['Idea','To-Do','Question','Feeling','Random'].map(t=>`<span class="tag-pill tag-${t.toLowerCase().replace('-','')}" onclick="setDumpTag('${t}')" id="qtag-${t.toLowerCase()}">${t}</span>`).join('')}
+        </div>
+        <button class="btn-primary" style="margin-top:12px;width:100%;justify-content:center" onclick="quickDump()">Capture</button>
+      </div>
+      
+      <!-- Focus Timer -->
+      <div class="card">
+        <h3 style="margin-bottom:12px">Focus Timer</h3>
+        <div class="timer-modes">
+          <button class="timer-mode-btn active" id="tmode-25" onclick="setTimerMode(25)">Pomodoro</button>
+          <button class="timer-mode-btn" id="tmode-5" onclick="setTimerMode(5)">Short Break</button>
+          <button class="timer-mode-btn" id="tmode-15" onclick="setTimerMode(15)">Long Break</button>
+        </div>
+        <div class="timer-display" id="timer-display">${fmtTimer(timerLeft)}</div>
+        <div class="timer-controls">
+          <button class="btn-secondary" onclick="toggleTimer()" id="timer-btn">▶ Start</button>
+          <button class="btn-secondary" onclick="resetTimer()">↺ Reset</button>
+        </div>
+      </div>
+      
+      <!-- Today's Habits -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Today's Habits</h3>
+        ${todayHabits.length ? todayHabits.map(h=>`
+          <div class="habit-item">
+            <div class="habit-check${doneHabits.includes(h.id)?' done':''}" onclick="toggleHabit('${h.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500">${h.icon||'✅'} ${h.name}</div>
+              <div class="habit-streak-dots">${getLast7Days().map(d=>{ const log=(D.hlogs||[]).find(l=>l.date===d); const done=log?.done?.includes(h.id); return `<div class="streak-dot${done?' done':''}"></div>`; }).join('')}</div>
+            </div>
+            <div style="font-size:12px;color:var(--text3)">${calcStreak(h.id)} day streak</div>
+          </div>`).join('') : `<div class="empty-state"><p class="empty-sub">No habits yet</p><button class="btn-primary" onclick="nav('habits')">Add Habit</button></div>`}
+      </div>
+      
+      <!-- Coming Up -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Coming Up</h3>
+        ${getNext7DaysTasks().length ? getNext7DaysTasks().slice(0,6).map(t=>`
+          <div class="task-item">
+            <div style="flex-shrink:0;font-size:11px;color:var(--text3);min-width:48px">${fmtDate(t.date)}</div>
+            <div style="flex:1;font-size:14px;font-weight:500">${t.name}</div>
+            <span class="priority-badge ${t.priority||'medium'}">${t.priority||'medium'}</span>
+          </div>`).join('') : `<div class="empty-state"><p class="empty-sub">Nothing coming up</p></div>`}
+      </div>
+      
+      <!-- Weekly Chart -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Weekly Productivity</h3>
+        <div class="bar-chart">
+          ${weekData.map(d=>`
+            <div class="bar-wrap">
+              <div class="bar" style="height:60px"><div class="bar-fill" style="height:${d.pct}%"></div></div>
+              <div class="bar-label">${d.label}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      
+      <!-- Recent Workouts -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Recent Workouts</h3>
+        ${(D.wkt||[]).slice(-3).reverse().map(w=>`
+          <div class="task-item">
+            <div class="stat-icon blue" style="width:36px;height:36px;border-radius:10px;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6.5 6.5h11M6.5 17.5h11M5 12h14"/></svg></div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500">${w.routineName||'Workout'}</div>
+              <div style="font-size:12px;color:var(--text3)">${fmtDate(w.date)} · ${w.exercises?.length||0} exercises</div>
+            </div>
+          </div>`).join('') || `<div class="empty-state"><p class="empty-sub">No workouts logged</p></div>`}
+      </div>
+      
+      <!-- Bible Widget -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Today's Verse</h3>
+          <button class="btn-secondary" onclick="nav('bible')" style="font-size:12px;padding:6px 12px">Open Bible ✝</button>
+        </div>
+        <div class="verse-card">
+          <div class="verse-text">"${bibleVerse.text}"</div>
+          <div class="verse-ref">— ${bibleVerse.ref}</div>
+        </div>
+        <div style="display:flex;gap:4px;margin:12px 0">
+          ${getLast7Days().map(d=>{ const c=D.bible?.checklist?.[d]; const done=c&&(c.read||c.studied||c.prayed); return `<div class="streak-dot${done?' done':''}" title="${fmtDate(d)}"></div>`; }).join('')}
+        </div>
+        <div style="display:flex;gap:8px">
+          ${['Read','Studied','Prayed'].map(a=>`
+            <button class="btn-secondary${bibleCheck[a.toLowerCase()]?' active':''}" style="flex:1;justify-content:center;font-size:12px;padding:8px" onclick="bibleCheck_('${a.toLowerCase()}')">
+              ${bibleCheck[a.toLowerCase()]?'✓':''} ${a}
+            </button>`).join('')}
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center">Streak: ${bibleStreak} days</div>
+      </div>
+      
+      <!-- Today's Classes -->
+      <div class="card">
+        <h3 style="margin-bottom:14px">Today's Classes</h3>
+        ${todayClasses.length ? todayClasses.map(c=>`
+          <div class="task-item">
+            <div class="stat-icon${c.type==='tesda'?' teal':' blue'}" style="width:36px;height:36px;border-radius:10px;flex-shrink:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">${c.subject}</div>
+              <div style="font-size:12px;color:var(--text3)">${c.time||''} ${c.room?'· '+c.room:''}</div>
+            </div>
+            <span class="cat-badge">${c.type==='tesda'?'TESDA':'College'}</span>
+          </div>`).join('') : `<div class="empty-state"><p class="empty-sub">No classes today</p><button class="btn-primary" onclick="nav('calendar')">Setup Schedule</button></div>`}
+      </div>
+    </div>
+    
+    <!-- Priority Modal -->
+    <div class="modal-overlay" id="priority-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>🔴 High Priority Tasks</h3>
+          <div class="modal-close" onclick="closeModal('priority-modal')">✕</div>
+        </div>
+        ${highPrio.length ? highPrio.map(t=>`
+          <div class="task-item">
+            <div class="task-check${t.done?' done':''}" onclick="toggleTask('${t.id}');renderPriorityList()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="task-name">${t.name}</div>
+              <div style="font-size:12px;color:var(--text3)">${t.date?fmtDate(t.date):''} ${t.category?'· '+t.category:''}</div>
+            </div>
+          </div>`).join('') : '<div class="empty-state"><p class="empty-title">No high-priority tasks! 🎉</p></div>'}
+      </div>
+    </div>
+  `;
+  
+  // Reset active dump tag
+  window._dumpTag = 'Random';
+}
+
+function openPriorityModal() { openModal('priority-modal'); }
+
+let _dumpTag = 'Random';
+function setDumpTag(tag) {
+  _dumpTag = tag;
+  document.querySelectorAll('[id^="qtag-"]').forEach(el=>el.style.opacity='0.5');
+  const el = document.getElementById('qtag-'+tag.toLowerCase().replace('-',''));
+  if(el) el.style.opacity='1';
+}
+function quickDump() {
+  const text = document.getElementById('quick-dump')?.value?.trim();
+  if (!text) return;
+  D.dumps = D.dumps || [];
+  D.dumps.unshift({ id:uid(), text, tag:_dumpTag, date:today(), done:false });
+  document.getElementById('quick-dump').value = '';
+  save('Captured! 💡');
+}
+
+// Timer
+function fmtTimer(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+function setTimerMode(min) {
+  if (timerRunning) { clearInterval(timerInterval); timerRunning=false; }
+  timerMode=min; timerLeft=min*60;
+  document.querySelectorAll('.timer-mode-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('tmode-'+min); if(el) el.classList.add('active');
+  const td=document.getElementById('timer-display'); if(td) td.textContent=fmtTimer(timerLeft);
+  const tb=document.getElementById('timer-btn'); if(tb) tb.textContent='▶ Start';
+}
+function toggleTimer() {
+  const btn=document.getElementById('timer-btn');
+  if(timerRunning) { clearInterval(timerInterval); timerRunning=false; if(btn) btn.textContent='▶ Start'; }
+  else {
+    timerRunning=true; if(btn) btn.textContent='⏸ Pause';
+    timerInterval=setInterval(()=>{
+      timerLeft--;
+      const td=document.getElementById('timer-display'); if(td) td.textContent=fmtTimer(timerLeft);
+      if(timerLeft<=0) { clearInterval(timerInterval); timerRunning=false; toast('⏱ Timer complete!'); timerLeft=timerMode*60; if(td) td.textContent=fmtTimer(timerLeft); if(btn) btn.textContent='▶ Start'; }
+    },1000);
+  }
+}
+function resetTimer() { clearInterval(timerInterval); timerRunning=false; timerLeft=timerMode*60; const td=document.getElementById('timer-display'); if(td) td.textContent=fmtTimer(timerLeft); const btn=document.getElementById('timer-btn'); if(btn) btn.textContent='▶ Start'; }
+
+// Task toggle
+function toggleTask(id) {
+  const t = (D.tasks||[]).find(t=>t.id===id);
+  if(t) { t.done=!t.done; save(); if(currentPage==='dashboard') renderDashboard(); else renderPage(currentPage); }
+}
+
+// Habit toggle
+function toggleHabit(id) {
+  const todayStr=today();
+  if (!D.hlogs) D.hlogs=[];
+  let log=D.hlogs.find(l=>l.date===todayStr);
+  if(!log) { log={id:uid(),date:todayStr,done:[]}; D.hlogs.push(log); }
+  if(log.done.includes(id)) log.done=log.done.filter(x=>x!==id);
+  else log.done.push(id);
+  save(); renderDashboard();
+}
+
+// Bible check
+function bibleCheck_(action) {
+  const todayStr=today();
+  if(!D.bible) D.bible={soap:[],prayer:[],checklist:{}};
+  if(!D.bible.checklist) D.bible.checklist={};
+  if(!D.bible.checklist[todayStr]) D.bible.checklist[todayStr]={};
+  D.bible.checklist[todayStr][action]=!D.bible.checklist[todayStr][action];
+  save(); renderDashboard();
+}
+
+function getLast7Days() {
+  return Array.from({length:7},(_,i)=>{ const d=new Date(); d.setDate(d.getDate()-6+i); return d.toISOString().split('T')[0]; });
+}
+function calcStreak(habitId) {
+  let streak=0, d=new Date();
+  while(true) {
+    const dateStr=d.toISOString().split('T')[0];
+    const log=(D.hlogs||[]).find(l=>l.date===dateStr);
+    if(log?.done?.includes(habitId)) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+function calcBibleStreak() {
+  let streak=0, d=new Date();
+  while(true) {
+    const ds=d.toISOString().split('T')[0];
+    const c=D.bible?.checklist?.[ds];
+    if(c&&(c.read||c.studied||c.prayed)) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+function getNext7DaysTasks() {
+  const d=new Date(); const start=d.toISOString().split('T')[0];
+  const end=new Date(); end.setDate(end.getDate()+7); const endStr=end.toISOString().split('T')[0];
+  return (D.tasks||[]).filter(t=>t.date>start&&t.date<=endStr&&!t.done).sort((a,b)=>a.date.localeCompare(b.date));
+}
+function getWeekChart() {
+  const days=['S','M','T','W','T','F','S'];
+  return Array.from({length:7},(_,i)=>{ 
+    const d=new Date(); d.setDate(d.getDate()-6+i);
+    const ds=d.toISOString().split('T')[0];
+    const total=(D.tasks||[]).filter(t=>t.date===ds).length;
+    const done=(D.tasks||[]).filter(t=>t.date===ds&&t.done).length;
+    return { label:days[d.getDay()], pct:total?Math.round(done/total*100):0 };
+  });
+}
+
+// ==================== CALENDAR ====================
+let calTab='calendar', calView='month', calSelected=today(), calSelectedEvent=null;
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
+function renderCalendar() {
+  document.getElementById('content').innerHTML = `
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <div class="tab-bar">
+        ${[['calendar','📅 Calendar'],['todo','☑️ To-Do'],['daily','☀️ Daily Plan'],['weekly','📆 Weekly Plan'],['monthly','🗓 Monthly Plan'],['schedule','🎓 Schedule']].map(([k,l])=>`<button class="tab-btn${calTab===k?' active':''}" onclick="setCalTab('${k}')">${l}</button>`).join('')}
+      </div>
+    </div>
+    <div id="cal-tab-content"></div>
+    ${renderCalModals()}
+  `;
+  renderCalTab();
+}
+
+function setCalTab(t) { calTab=t; renderCalendar(); }
+
+function renderCalTab() {
+  const el=document.getElementById('cal-tab-content');
+  if(!el) return;
+  const fns={calendar:renderCalendarView, todo:renderTodoView, daily:renderDailyPlan, weekly:renderWeeklyPlan, monthly:renderMonthlyPlan, schedule:renderScheduleView};
+  if(fns[calTab]) fns[calTab]();
+}
+
+function renderCalendarView() {
+  const el=document.getElementById('cal-tab-content');
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  const monthName=new Date(calYear,calMonth).toLocaleString('default',{month:'long'});
+  const todayStr=today();
+  const selectedDayEvents=(D.events||[]).filter(e=>e.date===calSelected);
+  
+  let cells='';
+  const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
+  for(let i=0;i<totalCells;i++){
+    let day,mo,isOther=false;
+    if(i<firstDay){day=daysInPrev-(firstDay-1-i);mo=calMonth-1;isOther=true;}
+    else if(i>=firstDay+daysInMonth){day=i-firstDay-daysInMonth+1;mo=calMonth+1;isOther=true;}
+    else{day=i-firstDay+1;mo=calMonth;}
+    const d=new Date(calYear,mo,day);
+    const ds=d.toISOString().split('T')[0];
+    const dayEvents=(D.events||[]).filter(e=>e.date===ds||isEventSpanning(e,ds));
+    const isToday=ds===todayStr;
+    const isSel=ds===calSelected;
+    cells+=`<div class="cal-day${isOther?' other-month':''}${isToday?' today':''}${isSel?' selected':''}" onclick="selectCalDay('${ds}')">
+      <div class="day-num">${day}</div>
+      ${dayEvents.slice(0,2).map(e=>`<div class="cal-event ev-${e.color||'blue'}">${e.name||'Event'}</div>`).join('')}
+      ${dayEvents.length>2?`<div style="font-size:10px;color:var(--text3)">+${dayEvents.length-2} more</div>`:''}
+    </div>`;
+  }
+  
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <button class="btn-icon" onclick="calNav(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15,18 9,12 15,6"/></svg></button>
+          <h2 style="flex:1;text-align:center">${monthName} ${calYear}</h2>
+          <button class="btn-icon" onclick="calNav(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9,18 15,12 9,6"/></svg></button>
+          <button class="btn-primary" onclick="openEventModal()">+ Add Event</button>
+        </div>
+        <div class="cal-grid" style="margin-bottom:4px">
+          ${days.map(d=>`<div class="cal-header">${d}</div>`).join('')}
+        </div>
+        <div class="cal-grid">${cells}</div>
+      </div>
+      
+      <!-- Side panel -->
+      <div class="card" style="align-self:start">
+        <h4 style="margin-bottom:12px">${fmtDate(calSelected)}</h4>
+        ${selectedDayEvents.length ? selectedDayEvents.map(e=>`
+          <div style="padding:10px;border-radius:10px;margin-bottom:8px;background:var(--bg2);cursor:pointer" onclick="editEvent('${e.id}')">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent${e.color==='teal'?'2':''})" class="ev-${e.color||'blue'}"></div>
+              <div style="font-weight:600;font-size:14px;flex:1">${e.name}</div>
+            </div>
+            ${e.startTime?`<div style="font-size:12px;color:var(--text3);margin-top:3px">${e.startTime}${e.endTime?' – '+e.endTime:''}</div>`:''}
+            ${e.location?`<div style="font-size:12px;color:var(--text3)">📍 ${e.location}</div>`:''}
+            <div style="display:flex;gap:6px;margin-top:6px">
+              <span class="priority-badge ${e.priority||'medium'}">${e.priority||'medium'}</span>
+              ${e.category?`<span class="cat-badge">${e.category}</span>`:''}
+            </div>
+          </div>`).join('') : `<div class="empty-state" style="padding:20px"><p class="empty-sub">No events</p><button class="btn-primary" onclick="openEventModal()">+ Add</button></div>`}
+        <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="openEventModal()">+ Add Event</button>
+      </div>
+    </div>
+  `;
+}
+
+function isEventSpanning(e,ds){ return e.endDate&&e.date<=ds&&e.endDate>=ds&&e.date!==ds; }
+function calNav(dir){ calMonth+=dir; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendarView(); }
+function selectCalDay(ds){ calSelected=ds; renderCalendarView(); }
+
+function openEventModal(id) {
+  const e = id ? (D.events||[]).find(ev=>ev.id===id) : null;
+  calSelectedEvent = e || null;
+  const m=document.getElementById('event-modal');
+  if(!m) return;
+  document.getElementById('ev-name').value=e?.name||'';
+  document.getElementById('ev-date').value=e?.date||calSelected;
+  document.getElementById('ev-end-date').value=e?.endDate||'';
+  document.getElementById('ev-start-time').value=e?.startTime||'';
+  document.getElementById('ev-end-time').value=e?.endTime||'';
+  document.getElementById('ev-color').value=e?.color||'blue';
+  document.getElementById('ev-priority').value=e?.priority||'medium';
+  document.getElementById('ev-category').value=e?.category||'';
+  document.getElementById('ev-location').value=e?.location||'';
+  document.getElementById('ev-desc').value=e?.description||'';
+  document.getElementById('ev-link').value=e?.link||'';
+  document.getElementById('ev-alarm').value=e?.alarm||'';
+  document.getElementById('event-modal-title').textContent=e?'Edit Event':'Add Event';
+  openModal('event-modal');
+}
+function editEvent(id){ openEventModal(id); }
+function saveEvent() {
+  const id=calSelectedEvent?.id||uid();
+  const e={
+    id, name:document.getElementById('ev-name').value,
+    date:document.getElementById('ev-date').value,
+    endDate:document.getElementById('ev-end-date').value,
+    startTime:document.getElementById('ev-start-time').value,
+    endTime:document.getElementById('ev-end-time').value,
+    color:document.getElementById('ev-color').value,
+    priority:document.getElementById('ev-priority').value,
+    category:document.getElementById('ev-category').value,
+    location:document.getElementById('ev-location').value,
+    description:document.getElementById('ev-desc').value,
+    link:document.getElementById('ev-link').value,
+    alarm:document.getElementById('ev-alarm').value,
+  };
+  if(!e.name||!e.date){toast('Name and date required');return;}
+  if(!D.events) D.events=[];
+  const idx=D.events.findIndex(ev=>ev.id===id);
+  if(idx>=0) D.events[idx]=e; else D.events.push(e);
+  // Schedule alarm
+  if(e.alarm&&e.startTime&&e.date) scheduleAlarm(e);
+  save('Event saved ✓');
+  closeModal('event-modal');
+  renderCalendarView();
+  // Update badge
+  updateCalBadge();
+}
+function deleteEvent() {
+  if(!calSelectedEvent) return;
+  D.events=(D.events||[]).filter(e=>e.id!==calSelectedEvent.id);
+  save('Event deleted'); closeModal('event-modal'); renderCalendarView();
+}
+function scheduleAlarm(e) {
+  const [h,m]=e.startTime.split(':').map(Number);
+  const [y,mo,d]=e.date.split('-').map(Number);
+  const alarmTime=new Date(y,mo-1,d,h,m)-(Number(e.alarm)*60000);
+  const now=Date.now();
+  if(alarmTime>now) setTimeout(()=>{ toast(`⏰ Upcoming: ${e.name}`); if(Notification.permission==='granted') new Notification(`Reminder: ${e.name}`,{body:`Starts at ${e.startTime}`}); },alarmTime-now);
+}
+function updateCalBadge() {
+  const todayStr=today();
+  const todayEvs=(D.events||[]).filter(e=>e.date===todayStr).length;
+  const badge=document.getElementById('cal-badge');
+  if(badge){ badge.textContent=todayEvs; badge.style.display=todayEvs?'':'none'; }
+}
+
+// To-Do
+function renderTodoView() {
+  const el=document.getElementById('cal-tab-content');
+  const lists=D.lists||[];
+  el.innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn-primary" onclick="openListModal()">+ New List</button>
+    </div>
+    ${lists.length ? lists.map(l=>`
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="font-size:20px">${l.icon||'📋'}</span>
+          <h3 style="flex:1">${l.name}</h3>
+          <span style="padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${l.color||'var(--accent)'}22;color:${l.color||'var(--accent)'}">${l.color?'':'List'}</span>
+          <button class="btn-icon" onclick="deleteList('${l.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+        </div>
+        <div id="items-${l.id}">
+          ${(D.listItems||[]).filter(i=>i.listId===l.id).map(item=>renderTodoItem(item,l)).join('')}
+        </div>
+        <button class="btn-secondary" style="margin-top:8px" onclick="openItemModal('${l.id}')">+ Add Item</button>
+      </div>`).join('') : `<div class="empty-state card"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M9 11l3 3L22 4"/></svg></div><p class="empty-title">No lists yet</p><button class="btn-primary" onclick="openListModal()">Create List</button></div>`}
+    
+    <!-- List modal -->
+    <div class="modal-overlay" id="list-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>New List</h3><div class="modal-close" onclick="closeModal('list-modal')">✕</div></div>
+        <div class="form-group"><label>List Name</label><input class="input" id="list-name" placeholder="My List"/></div>
+        <div class="form-group"><label>Icon (emoji)</label><input class="input" id="list-icon" placeholder="📋" maxlength="2"/></div>
+        <div class="form-group"><label>Color</label><input type="color" class="input" id="list-color" value="#4361EE"/></div>
+        <div class="form-group"><label>Allow Sub-tasks</label><select class="input" id="list-subtasks"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('list-modal')">Cancel</button><button class="btn-primary" onclick="saveList()">Create</button></div>
+      </div>
+    </div>
+    
+    <!-- Item modal -->
+    <div class="modal-overlay" id="item-modal">
+      <div class="modal">
+        <div class="modal-header"><h3 id="item-modal-title">Add Item</h3><div class="modal-close" onclick="closeModal('item-modal')">✕</div></div>
+        <input type="hidden" id="item-list-id"/>
+        <input type="hidden" id="item-id-edit"/>
+        <div class="form-group"><label>Name</label><input class="input" id="item-name" placeholder="Task name"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Date</label><input type="date" class="input" id="item-date"/></div>
+          <div class="form-group"><label>Time</label><input type="time" class="input" id="item-time"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Priority</label><select class="input" id="item-priority"><option>high</option><option selected>medium</option><option>low</option></select></div>
+          <div class="form-group"><label>Connect to Plan</label><select class="input" id="item-plan"><option value="">None</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+        </div>
+        <div class="form-group"><label>Note</label><textarea class="input" id="item-note" rows="2" placeholder="Optional note…"></textarea></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('item-modal')">Cancel</button><button class="btn-primary" onclick="saveItem()">Save</button></div>
+      </div>
+    </div>
+  `;
+}
+function renderTodoItem(item,list) {
+  return `<div class="task-item${item.done?' done':''}">
+    <div class="task-check${item.done?' done':''}" onclick="toggleItem('${item.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg></div>
+    <div style="flex:1">
+      <div class="task-name">${item.name}</div>
+      <div class="task-meta">
+        <span class="priority-badge ${item.priority||'medium'}">${item.priority||'medium'}</span>
+        ${item.date?`<span class="cat-badge">${fmtDate(item.date)}</span>`:''}
+        ${item.plan?`<span class="cat-badge">→ ${item.plan}</span>`:''}
+      </div>
+      ${item.note?`<div style="font-size:12px;color:var(--text2);margin-top:3px">${item.note}</div>`:''}
+    </div>
+    <button class="btn-icon" onclick="openEditItem('${item.id}','${list.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+    <button class="btn-icon" onclick="deleteItem('${item.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+  </div>`;
+}
+function openListModal(){ openModal('list-modal'); }
+function saveList(){
+  const name=document.getElementById('list-name').value;
+  if(!name){toast('Name required');return;}
+  if(!D.lists) D.lists=[];
+  D.lists.push({id:uid(),name,icon:document.getElementById('list-icon').value||'📋',color:document.getElementById('list-color').value,subtasks:document.getElementById('list-subtasks').value==='yes'});
+  save('List created'); closeModal('list-modal'); renderTodoView();
+}
+function deleteList(id){ D.lists=(D.lists||[]).filter(l=>l.id!==id); D.listItems=(D.listItems||[]).filter(i=>i.listId!==id); save('List deleted'); renderTodoView(); }
+function openItemModal(listId){ document.getElementById('item-list-id').value=listId; document.getElementById('item-id-edit').value=''; document.getElementById('item-modal-title').textContent='Add Item'; ['item-name','item-note'].forEach(id=>document.getElementById(id).value=''); ['item-date','item-time'].forEach(id=>document.getElementById(id).value=''); document.getElementById('item-priority').value='medium'; document.getElementById('item-plan').value=''; openModal('item-modal'); }
+function openEditItem(itemId,listId){
+  const item=(D.listItems||[]).find(i=>i.id===itemId);
+  if(!item) return;
+  document.getElementById('item-list-id').value=listId;
+  document.getElementById('item-id-edit').value=itemId;
+  document.getElementById('item-modal-title').textContent='Edit Item';
+  document.getElementById('item-name').value=item.name||'';
+  document.getElementById('item-date').value=item.date||'';
+  document.getElementById('item-time').value=item.time||'';
+  document.getElementById('item-priority').value=item.priority||'medium';
+  document.getElementById('item-plan').value=item.plan||'';
+  document.getElementById('item-note').value=item.note||'';
+  openModal('item-modal');
+}
+function saveItem(){
+  const listId=document.getElementById('item-list-id').value;
+  const editId=document.getElementById('item-id-edit').value;
+  const name=document.getElementById('item-name').value;
+  if(!name){toast('Name required');return;}
+  const item={id:editId||uid(),listId,name,date:document.getElementById('item-date').value,time:document.getElementById('item-time').value,priority:document.getElementById('item-priority').value,plan:document.getElementById('item-plan').value,note:document.getElementById('item-note').value,done:false};
+  if(!D.listItems) D.listItems=[];
+  const idx=D.listItems.findIndex(i=>i.id===editId);
+  if(idx>=0) D.listItems[idx]={...D.listItems[idx],...item}; else D.listItems.push(item);
+  // Sync to tasks for plan connection
+  if(item.plan){
+    if(!D.tasks) D.tasks=[];
+    const exist=D.tasks.find(t=>t.listItemId===item.id);
+    if(!exist) D.tasks.push({id:uid(),listItemId:item.id,name:item.name,date:item.date,priority:item.priority,category:'personal',done:false});
+  }
+  save('Item saved'); closeModal('item-modal'); renderTodoView();
+}
+function toggleItem(id){ const i=(D.listItems||[]).find(i=>i.id===id); if(i){ i.done=!i.done; save(); renderTodoView(); } }
+function deleteItem(id){ D.listItems=(D.listItems||[]).filter(i=>i.id!==id); save('Deleted'); renderTodoView(); }
+
+// Plans
+function renderDailyPlan() {
+  const todayStr=today();
+  const plan=D.plan?.daily?.[todayStr]||{blocks:[],goals:[],reflection:''};
+  document.getElementById('cal-tab-content').innerHTML=`
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3>Time Blocks — ${fmtDate(todayStr)}</h3>
+          <button class="btn-primary" onclick="addPlanBlock('daily','${todayStr}')">+ Block</button>
+        </div>
+        ${(plan.blocks||[]).sort((a,b)=>a.time?.localeCompare(b.time)).map(b=>`
+          <div class="plan-block">
+            <div class="plan-time">${b.time||''}</div>
+            <div class="plan-title">${b.title}</div>
+          </div>`).join('') || '<p style="color:var(--text3);font-size:14px;text-align:center;padding:20px">No blocks yet</p>'}
+      </div>
+      <div style="flex:1;min-width:280px">
+        <h3 style="margin-bottom:14px">Goals</h3>
+        ${(plan.goals||[]).map(g=>`<div class="task-item"><div style="flex:1;font-weight:500">${g.text}</div><span class="priority-badge ${g.priority||'medium'}">${g.priority||'medium'}</span></div>`).join('') || '<p style="color:var(--text3);text-align:center;padding:20px;font-size:14px">No goals</p>'}
+        <button class="btn-secondary" style="margin-top:8px" onclick="addPlanGoal('daily','${todayStr}')">+ Goal</button>
+        <h3 style="margin:16px 0 10px">Reflection</h3>
+        <textarea class="input" id="plan-reflection" rows="4" placeholder="How did today go?">${plan.reflection||''}</textarea>
+        <button class="btn-primary" style="margin-top:8px" onclick="saveDailyReflection('${todayStr}')">Save Reflection</button>
+      </div>
+    </div>
+  `;
+}
+function saveDailyReflection(ds){ if(!D.plan) D.plan={daily:{},weekly:{},monthly:{}}; if(!D.plan.daily[ds]) D.plan.daily[ds]={blocks:[],goals:[],reflection:''}; D.plan.daily[ds].reflection=document.getElementById('plan-reflection').value; save('Saved ✓'); toast('Reflection saved'); }
+function addPlanBlock(type,key){ const time=prompt('Time (e.g. 09:00):'); const title=prompt('Task/Block title:'); if(!title) return; if(!D.plan[type][key]) D.plan[type][key]={blocks:[],goals:[],reflection:''}; D.plan[type][key].blocks.push({id:uid(),time,title}); save(); renderCalTab(); }
+function addPlanGoal(type,key){ const text=prompt('Goal:'); if(!text) return; const priority=prompt('Priority (high/medium/low):','medium'); if(!D.plan[type][key]) D.plan[type][key]={blocks:[],goals:[],reflection:''}; D.plan[type][key].goals.push({id:uid(),text,priority}); save(); renderCalTab(); }
+
+function renderWeeklyPlan() {
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dayKeys=['mon','tue','wed','thu','fri','sat','sun'];
+  let selDay=window._weekDay||'mon';
+  const plan=D.plan?.weekly?.[selDay]||{blocks:[],goals:[]};
+  document.getElementById('cal-tab-content').innerHTML=`
+    <div class="tab-bar" style="margin-bottom:16px">${days.map((d,i)=>`<button class="tab-btn${selDay===dayKeys[i]?' active':''}" onclick="selectWeekDay('${dayKeys[i]}')">${d}</button>`).join('')}</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3>${days[dayKeys.indexOf(selDay)]} — Time Blocks</h3>
+          <button class="btn-primary" onclick="addPlanBlock('weekly','${selDay}')">+ Block</button>
+        </div>
+        ${(plan.blocks||[]).map(b=>`<div class="plan-block"><div class="plan-time">${b.time||''}</div><div class="plan-title">${b.title}</div></div>`).join('')||'<p style="color:var(--text3);text-align:center;padding:20px;font-size:14px">No blocks</p>'}
+      </div>
+      <div style="flex:1;min-width:280px">
+        <h3 style="margin-bottom:14px">Goals</h3>
+        ${(plan.goals||[]).map(g=>`<div class="task-item"><div style="flex:1;font-weight:500">${g.text}</div><span class="priority-badge ${g.priority||'medium'}">${g.priority||'medium'}</span></div>`).join('')||'<p style="color:var(--text3);text-align:center;padding:20px;font-size:14px">No goals</p>'}
+        <button class="btn-secondary" onclick="addPlanGoal('weekly','${selDay}')">+ Goal</button>
+      </div>
+    </div>
+  `;
+}
+function selectWeekDay(d){ window._weekDay=d; renderWeeklyPlan(); }
+
+function renderMonthlyPlan() {
+  const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  const plan=D.plan?.monthly?.[key]||{focus:[],goals:[]};
+  document.getElementById('cal-tab-content').innerHTML=`
+    <h3 style="margin-bottom:16px">Monthly Plan — ${new Date(calYear,calMonth).toLocaleString('default',{month:'long'})} ${calYear}</h3>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px"><h4>Focus Areas</h4><button class="btn-icon" onclick="addMonthFocus('${key}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+        ${(plan.focus||[]).map(f=>`<div class="plan-block">${f}</div>`).join('')||'<p style="color:var(--text3);font-size:14px;padding:10px">None yet</p>'}
+      </div>
+      <div style="flex:1;min-width:280px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px"><h4>Goals</h4><button class="btn-secondary" onclick="addPlanGoal('monthly','${key}')">+ Goal</button></div>
+        ${(plan.goals||[]).map(g=>`<div class="task-item"><div style="flex:1;font-weight:500">${g.text}</div><span class="priority-badge ${g.priority||'medium'}">${g.priority||'medium'}</span></div>`).join('')||'<p style="color:var(--text3);text-align:center;padding:20px;font-size:14px">No goals</p>'}
+      </div>
+    </div>
+  `;
+}
+function addMonthFocus(key){ const f=prompt('Focus area:'); if(!f) return; if(!D.plan.monthly) D.plan.monthly={}; if(!D.plan.monthly[key]) D.plan.monthly[key]={focus:[],goals:[]}; D.plan.monthly[key].focus.push(f); save(); renderMonthlyPlan(); }
+
+function renderScheduleView() {
+  const schedTab=window._schedTab||'college';
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayKeys=['mon','tue','wed','thu','fri','sat'];
+  const subjects=(schedTab==='college'?D.sched?.college:D.sched?.tesda)||[];
+  document.getElementById('cal-tab-content').innerHTML=`
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="tab-btn${schedTab==='college'?' active':''}" onclick="setSchedTab('college')">🎓 College</button>
+      <button class="tab-btn${schedTab==='tesda'?' active':''}" onclick="setSchedTab('tesda')">📚 TESDA Self-Study</button>
+      <button class="btn-primary" style="margin-left:auto" onclick="addSubject('${schedTab}')">+ Add Subject</button>
+    </div>
+    <div style="overflow-x:auto">
+      <div class="timetable-grid">
+        ${['Subject',...days].map(d=>`<div class="timetable-header">${d}</div>`).join('')}
+        ${subjects.map(s=>`
+          <div style="padding:8px;border-radius:10px;box-shadow:var(--neu-out-sm);display:flex;flex-direction:column;gap:4px">
+            <div style="font-weight:700;font-size:13px">${s.subject}</div>
+            ${s.room?`<div style="font-size:11px;color:var(--text3)">${s.room}</div>`:''}
+            <button class="btn-icon" onclick="deleteSubject('${schedTab}','${s.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+          </div>
+          ${dayKeys.map(dk=>`<div class="timetable-cell">${s.days?.includes(dk)?`<div class="sched-block">${s.time||''}</div>`:''}</div>`).join('')}`).join('')}
+      </div>
+    </div>
+    ${subjects.length?`<div style="margin-top:20px"><h3 style="margin-bottom:12px">Topics & Progress</h3>${subjects.map(s=>`
+      <div class="card card-sm" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>${s.subject}</strong>
+          <span style="font-size:12px;color:var(--text3)">${(s.topics||[]).filter(t=>t.done).length}/${(s.topics||[]).length} topics</span>
+        </div>
+        ${(s.topics||[]).map(t=>`<div class="task-item" style="margin-top:6px"><div class="task-check${t.done?' done':''}" onclick="toggleTopic('${schedTab}','${s.id}','${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg></div><div class="task-name">${t.name}</div></div>`).join('')||'<p style="font-size:13px;color:var(--text3);padding:8px 0">No topics yet</p>'}
+        <button class="btn-secondary" style="margin-top:8px;font-size:12px" onclick="addTopic('${schedTab}','${s.id}')">+ Topic</button>
+      </div>`).join('')}</div>`:''}
+  `;
+}
+function setSchedTab(t){ window._schedTab=t; renderScheduleView(); }
+function addSubject(type){
+  const subject=prompt('Subject name:'); if(!subject) return;
+  const time=prompt('Time (e.g. 8:00-10:00):');
+  const room=prompt('Room/Platform:');
+  const daysInput=prompt('Days (comma-separated: mon,tue,wed,thu,fri,sat):','mon,wed,fri');
+  const days=daysInput?daysInput.split(',').map(d=>d.trim()):[];
+  if(!D.sched[type]) D.sched[type]=[];
+  D.sched[type].push({id:uid(),subject,time,room,days,topics:[],type});
+  save('Subject added'); renderScheduleView();
+}
+function deleteSubject(type,id){ D.sched[type]=(D.sched[type]||[]).filter(s=>s.id!==id); save('Deleted'); renderScheduleView(); }
+function addTopic(type,subjectId){ const name=prompt('Topic:'); if(!name) return; const s=D.sched[type]?.find(s=>s.id===subjectId); if(s){ if(!s.topics) s.topics=[]; s.topics.push({id:uid(),name,done:false}); save(); renderScheduleView(); } }
+function toggleTopic(type,subjectId,topicId){ const s=D.sched[type]?.find(s=>s.id===subjectId); if(s){ const t=s.topics?.find(t=>t.id===topicId); if(t){ t.done=!t.done; save(); renderScheduleView(); } } }
+
+function renderCalModals() {
+  return `
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="event-modal">
+      <div class="modal" style="max-width:560px">
+        <div class="modal-header"><h3 id="event-modal-title">Add Event</h3><div class="modal-close" onclick="closeModal('event-modal')">✕</div></div>
+        <div class="form-group"><label>Event Name</label><input class="input" id="ev-name" placeholder="Event name"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Start Date</label><input type="date" class="input" id="ev-date"/></div>
+          <div class="form-group"><label>End Date</label><input type="date" class="input" id="ev-end-date"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Start Time</label><input type="time" class="input" id="ev-start-time"/></div>
+          <div class="form-group"><label>End Time</label><input type="time" class="input" id="ev-end-time"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Color</label><select class="input" id="ev-color"><option value="blue">Blue</option><option value="teal">Teal</option><option value="green">Green</option><option value="amber">Amber</option><option value="red">Red</option></select></div>
+          <div class="form-group"><label>Priority</label><select class="input" id="ev-priority"><option>high</option><option selected>medium</option><option>low</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Category</label><select class="input" id="ev-category"><option value="">—</option><option>academics</option><option>personal</option><option>work</option><option>health</option><option>faith</option></select></div>
+          <div class="form-group"><label>Alarm (min before)</label><input type="number" class="input" id="ev-alarm" placeholder="e.g. 15"/></div>
+        </div>
+        <div class="form-group"><label>Location</label><input class="input" id="ev-location" placeholder="Room, address, link…"/></div>
+        <div class="form-group"><label>Description</label><textarea class="input" id="ev-desc" rows="2" placeholder="Details…"></textarea></div>
+        <div class="form-group"><label>Link</label><input class="input" id="ev-link" placeholder="https://…"/></div>
+        <div class="modal-footer">
+          <button class="btn-danger" onclick="deleteEvent()" id="ev-delete-btn">Delete</button>
+          <button class="btn-secondary" onclick="closeModal('event-modal')">Cancel</button>
+          <button class="btn-primary" onclick="saveEvent()">Save Event</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== HABITS ====================
+function renderHabits() {
+  const todayStr=today();
+  const hlog=(D.hlogs||[]).find(l=>l.date===todayStr)||{done:[]};
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:22px">My Habits</h2>
+      <button class="btn-primary" onclick="openHabitModal()">+ Add Habit</button>
+    </div>
+    
+    ${(D.habits||[]).length ? `
+    <div class="card" style="margin-bottom:20px">
+      <h3 style="margin-bottom:16px">Today's Check-in — ${fmtDate(todayStr)}</h3>
+      ${(D.habits||[]).map(h=>`
+        <div class="habit-item">
+          <div class="habit-check${hlog.done?.includes(h.id)?' done':''}" onclick="toggleHabit('${h.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+          </div>
+          <div style="font-size:18px">${h.icon||'✅'}</div>
+          <div style="flex:1">
+            <div style="font-weight:600">${h.name}</div>
+            ${h.duration?`<div style="font-size:12px;color:var(--text3)">${h.duration} min · goal: ${h.goal} days/week</div>`:
+            `<div style="font-size:12px;color:var(--text3)">Goal: ${h.goal||7} days/week</div>`}
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:700;color:var(--accent)">${calcStreak(h.id)}</div>
+            <div style="font-size:11px;color:var(--text3)">day streak</div>
+          </div>
+          <button class="btn-icon" onclick="deleteHabit('${h.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </div>`).join('')}
+    </div>
+    
+    <div class="card">
+      <h3 style="margin-bottom:16px">7-Day Overview</h3>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:separate;border-spacing:4px">
+          <tr><th style="text-align:left;font-size:12px;color:var(--text2);padding:4px 8px">Habit</th>${getLast7Days().map(d=>`<th style="text-align:center;font-size:11px;color:var(--text3)">${fmtDate(d)}</th>`).join('')}</tr>
+          ${(D.habits||[]).map(h=>`
+            <tr>
+              <td style="font-size:13px;font-weight:500;padding:4px 8px">${h.icon||''} ${h.name}</td>
+              ${getLast7Days().map(d=>{ const log=(D.hlogs||[]).find(l=>l.date===d); const done=log?.done?.includes(h.id); return `<td style="text-align:center"><div class="streak-dot${done?' done':''}" style="margin:auto"></div></td>`; }).join('')}
+            </tr>`).join('')}
+        </table>
+      </div>
+    </div>` : `
+    <div class="empty-state card">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <p class="empty-title">No habits yet</p><p class="empty-sub">Build lasting habits one day at a time</p>
+      <button class="btn-primary" onclick="openHabitModal()">Add First Habit</button>
+    </div>`}
+    
+    <!-- Habit Modal -->
+    <div class="modal-overlay" id="habit-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>New Habit</h3><div class="modal-close" onclick="closeModal('habit-modal')">✕</div></div>
+        <div class="form-group"><label>Habit Name</label><input class="input" id="habit-name" placeholder="e.g. Morning Run"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Icon (emoji)</label><input class="input" id="habit-icon" placeholder="🏃" maxlength="2"/></div>
+          <div class="form-group"><label>Goal (days/week)</label><input type="number" class="input" id="habit-goal" min="1" max="7" value="7"/></div>
+        </div>
+        <div class="form-group"><label>Duration (min, optional)</label><input type="number" class="input" id="habit-duration" placeholder="e.g. 30"/></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('habit-modal')">Cancel</button><button class="btn-primary" onclick="saveHabit()">Add Habit</button></div>
+      </div>
+    </div>
+  `;
+}
+function openHabitModal(){ openModal('habit-modal'); }
+function saveHabit(){
+  const name=document.getElementById('habit-name').value;
+  if(!name){toast('Name required');return;}
+  if(!D.habits) D.habits=[];
+  D.habits.push({id:uid(),name,icon:document.getElementById('habit-icon').value||'✅',goal:Number(document.getElementById('habit-goal').value)||7,duration:document.getElementById('habit-duration').value});
+  save('Habit added!'); closeModal('habit-modal'); renderHabits();
+}
+function deleteHabit(id){ if(!confirm('Delete habit?')) return; D.habits=(D.habits||[]).filter(h=>h.id!==id); save('Deleted'); renderHabits(); }
+
+// ==================== NOTES ====================
+let currentNoteId = null;
+function renderNotes() {
+  const notes=(D.notes||[]).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||(b.updated||0)-(a.updated||0));
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2>Notes</h2>
+      <div style="display:flex;gap:10px">
+        <input class="input input-sm" placeholder="Search notes…" id="notes-search" oninput="filterNotes()" style="width:200px"/>
+        <button class="btn-primary" onclick="openNoteEditor(null)">+ New Note</button>
+      </div>
+    </div>
+    ${notes.length ? `<div class="notes-grid" id="notes-grid">${notes.map(renderNoteCard).join('')}</div>` : `
+    <div class="empty-state card">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+      <p class="empty-title">No notes yet</p><p class="empty-sub">Capture your thoughts beautifully</p>
+      <button class="btn-primary" onclick="openNoteEditor(null)">Create First Note</button>
+    </div>`}
+  `;
+}
+function renderNoteCard(n) {
+  const preview=n.content?.replace(/<[^>]+>/g,'')||'';
+  const words=preview.trim()?preview.trim().split(/\s+/).length:0;
+  return `<div class="note-card" onclick="openNoteEditor('${n.id}')">
+    <div class="note-color-bar" style="background:${n.color||'var(--accent)'}"></div>
+    <div class="note-body">
+      <div style="display:flex;align-items:flex-start;gap:4px">
+        <div class="note-title" style="flex:1">${n.title||'Untitled'}</div>
+        <button class="btn-icon" onclick="event.stopPropagation();quickPinNote('${n.id}')" title="${n.pinned?'Unpin':'Pin'}" style="opacity:${n.pinned?'1':'0.3'};font-size:13px;padding:2px">📌</button>
+      </div>
+      <div class="note-preview">${preview||'<span style="color:var(--text3)">Empty note…</span>'}</div>
+    </div>
+    <div class="note-footer">
+      <span>${fmtDate(n.updated||n.created||Date.now())}</span>
+      <span>${words} words${n.attachments?.length?' · 📎'+n.attachments.length:''}</span>
+    </div>
+  </div>`;
+}
+function quickPinNote(id) {
+  const n=(D.notes||[]).find(n=>n.id===id); if(!n) return;
+  n.pinned=!n.pinned; save(n.pinned?'Pinned 📌':'Unpinned'); renderNotes();
+}
+function filterNotes() {
+  const q=document.getElementById('notes-search')?.value?.toLowerCase()||'';
+  const notes=(D.notes||[]).filter(n=>n.title?.toLowerCase().includes(q)||n.content?.toLowerCase().includes(q));
+  const grid=document.getElementById('notes-grid');
+  if(grid) grid.innerHTML=notes.map(renderNoteCard).join('');
+}
+function openNoteEditor(id) {
+  currentNoteId=id;
+  const n=id?(D.notes||[]).find(n=>n.id===id):null;
+  document.getElementById('note-title-input').value=n?.title||'';
+  document.getElementById('note-color-select').value=n?.color||'#4361EE';
+  document.getElementById('note-content-area').innerHTML=n?.content||'';
+  // Pin button
+  const pinBtn=document.getElementById('note-pin-btn');
+  if(pinBtn) pinBtn.style.opacity=n?.pinned?'1':'0.4';
+  // Attachments bar
+  renderAttachmentsBar(n);
+  document.getElementById('note-editor').classList.add('open');
+  updateNoteWordCount();
+}
+function renderAttachmentsBar(n) {
+  const bar=document.getElementById('note-attachments-bar');
+  if(!bar) return;
+  const atts=n?.attachments||[];
+  if(atts.length===0) { bar.style.display='none'; return; }
+  bar.style.display='flex';
+  bar.innerHTML=`<span style="font-size:12px;color:var(--text3)">Attachments:</span>`+
+    atts.map((a,i)=>`<span class="attach-chip" onclick="openAttachment(${i})" title="${a.name}">📎 ${a.name} <span onclick="event.stopPropagation();removeAttachment(${i})" style="color:var(--danger);margin-left:2px">✕</span></span>`).join('');
+}
+function toggleNotePin() {
+  if(!currentNoteId) { toast('Save note first'); return; }
+  const n=(D.notes||[]).find(n=>n.id===currentNoteId);
+  if(n) { n.pinned=!n.pinned; save(n.pinned?'Note pinned 📌':'Unpinned'); const btn=document.getElementById('note-pin-btn'); if(btn) btn.style.opacity=n.pinned?'1':'0.4'; }
+}
+function attachFileToNote(input) {
+  const file=input?.files?.[0]; if(!file) return;
+  if(file.size>3*1024*1024) { toast('File too large (max 3MB)'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    if(!currentNoteId) {
+      // Auto-save first
+      const title=document.getElementById('note-title-input').value||'Untitled';
+      const content=document.getElementById('note-content-area').innerHTML;
+      const color=document.getElementById('note-color-select').value;
+      if(!D.notes) D.notes=[];
+      const id=uid();
+      D.notes.unshift({id,title,content,color,created:Date.now(),updated:Date.now(),attachments:[]});
+      currentNoteId=id;
+    }
+    const n=(D.notes||[]).find(n=>n.id===currentNoteId);
+    if(n) {
+      if(!n.attachments) n.attachments=[];
+      n.attachments.push({name:file.name,type:file.type,data:e.target.result});
+      save('File attached!');
+      renderAttachmentsBar(n);
+    }
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function openAttachment(idx) {
+  const n=(D.notes||[]).find(n=>n.id===currentNoteId); if(!n) return;
+  const a=n.attachments?.[idx]; if(!a) return;
+  const w=window.open(); w.document.write(`<img src="${a.data}" style="max-width:100%">`);
+}
+function removeAttachment(idx) {
+  const n=(D.notes||[]).find(n=>n.id===currentNoteId); if(!n) return;
+  n.attachments?.splice(idx,1); save('Attachment removed'); renderAttachmentsBar(n);
+}
+function updateNoteWordCount() {
+  const el=document.getElementById('note-content-area'); if(!el) return;
+  const words=el.innerText?.trim().split(/\s+/).filter(Boolean).length||0;
+  const wc=document.getElementById('note-wordcount'); if(wc) wc.textContent=words+' words';
+}
+function toggleMenu(id) {
+  document.querySelectorAll('[id$="-menu"]').forEach(m=>{ if(m.id!==id) m.style.display='none'; });
+  const m=document.getElementById(id); if(m) m.style.display=m.style.display==='none'?'block':'none';
+}
+function closeMenus() { document.querySelectorAll('[id$="-menu"]').forEach(m=>m.style.display='none'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('[id$="-menu"]')&&!e.target.closest('.editor-btn')) closeMenus(); });
+function insertNoteTable() { fmt('insertHTML','<table style="border-collapse:collapse;width:100%"><tr><td style="border:1px solid var(--bg2);padding:8px;min-width:80px">&nbsp;</td><td style="border:1px solid var(--bg2);padding:8px;min-width:80px">&nbsp;</td></tr><tr><td style="border:1px solid var(--bg2);padding:8px">&nbsp;</td><td style="border:1px solid var(--bg2);padding:8px">&nbsp;</td></tr></table><p></p>'); }
+function toggleFocusMode() { const ed=document.getElementById('note-editor'); ed.classList.toggle('focus-mode'); }
+function printNote() { window.print(); }
+function showWordCount() { const el=document.getElementById('note-content-area'); const words=el?.innerText?.trim().split(/\s+/).filter(Boolean).length||0; toast(`📝 ${words} words`); }
+function closeNoteEditor() { document.getElementById('note-editor').classList.remove('open'); }
+function saveNote() {
+  const title=document.getElementById('note-title-input').value||'Untitled';
+  const content=document.getElementById('note-content-area').innerHTML;
+  const color=document.getElementById('note-color-select').value;
+  if(!D.notes) D.notes=[];
+  if(currentNoteId) {
+    const n=D.notes.find(n=>n.id===currentNoteId);
+    if(n) { n.title=title; n.content=content; n.color=color; n.updated=Date.now(); }
+  } else {
+    const id=uid();
+    D.notes.unshift({id,title,content,color,created:Date.now(),updated:Date.now(),pinned:false,attachments:[]});
+    currentNoteId=id;
+  }
+  save('Note saved ✓'); closeNoteEditor(); if(currentPage==='notes') renderNotes();
+}
+function fmt(cmd,val) { document.execCommand(cmd,false,val||null); }
+function dfmt(cmd,val) { document.execCommand(cmd,false,val||null); }
+
+// ==================== BRAIN DUMP ====================
+let dumpFilter='all';
+
+// Weekly auto-clear check
+function checkDumpAutoClear() {
+  if (!D.dumpAutoClear) return;
+  const lastClear = D.dumpLastClear || '';
+  const now = new Date();
+  // Get start of current week (Monday)
+  const day = now.getDay();
+  const diff = (day===0) ? -6 : 1-day;
+  const weekStart = new Date(now); weekStart.setDate(now.getDate()+diff);
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  if (lastClear < weekStartStr) {
+    const cleared = (D.dumps||[]).filter(d=>d.done).length;
+    D.dumps = (D.dumps||[]).filter(d=>!d.done);
+    D.dumpLastClear = weekStartStr;
+    save();
+    if (cleared > 0) toast(`🧹 Auto-cleared ${cleared} completed entries`);
+  }
+}
+
+function renderBrainDump() {
+  checkDumpAutoClear();
+  const allDumps = D.dumps||[];
+  const dumps = allDumps.filter(d=>dumpFilter==='all'||d.tag?.toLowerCase()===dumpFilter);
+  const autoClear = D.dumpAutoClear||false;
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2>Brain Dump</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer">
+          <div class="toggle-wrap${autoClear?' on':''}" onclick="toggleDumpAutoClear()" title="Auto-clear completed entries every Monday">
+            <div class="toggle-knob"></div>
+          </div>
+          Weekly auto-clear
+        </label>
+        ${allDumps.filter(d=>d.done).length>0?`<button class="btn-secondary" style="font-size:12px;padding:6px 12px" onclick="clearDoneDumps()">Clear done (${allDumps.filter(d=>d.done).length})</button>`:''}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <textarea class="input" id="dump-input" placeholder="What's cluttering your mind? Just dump it…" rows="3" style="margin-bottom:12px"></textarea>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        ${['Idea','To-Do','Question','Feeling','Random'].map(t=>`<span class="tag-pill tag-${t.toLowerCase().replace('-','')}" onclick="setDumpFilterTag('${t}')" id="dtag-${t.toLowerCase()}">${t}</span>`).join('')}
+      </div>
+      <button class="btn-primary" onclick="addDump()">+ Capture</button>
+    </div>
+    
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      ${['all','idea','to-do','question','feeling','random'].map(t=>`<button class="tab-btn${dumpFilter===t?' active':''}" onclick="setDumpFilter('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+    </div>
+    
+    ${dumps.length ? dumps.map(d=>`
+      <div class="dump-item${d.done?' done':''}">
+        <div class="task-check${d.done?' done':''}" onclick="toggleDump('${d.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div style="flex:1">
+          <div class="dump-text" style="font-size:14px;line-height:1.5">${d.text}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--text3)">${fmtDate(d.date||Date.now())}</span>
+            ${d.connectedTo ? `<span class="dump-connected-badge" onclick="navToDumpConnection('${d.id}')">🔗 ${d.connectedTo.label}</span>` : ''}
+          </div>
+        </div>
+        <span class="tag-pill tag-${(d.tag||'random').toLowerCase().replace('-','')}">${d.tag||'Random'}</span>
+        <button class="btn-icon" title="Connect to…" onclick="openDumpConnectModal('${d.id}')" style="color:${d.connectedTo?'var(--accent)':'var(--text3)'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <button class="btn-icon" onclick="deleteDump('${d.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+      </div>`).join('') : `<div class="empty-state card"><p class="empty-title">Your mind is clear ✨</p></div>`}
+
+    <!-- Connect Modal -->
+    <div class="modal-overlay" id="dump-connect-modal">
+      <div class="modal" style="max-width:420px">
+        <div class="modal-header"><h3>Connect Entry</h3><div class="modal-close" onclick="closeModal('dump-connect-modal')">✕</div></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Link this thought to something actionable</p>
+        <input type="hidden" id="dump-connect-id"/>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn-secondary" style="justify-content:flex-start;gap:12px;padding:14px 16px" onclick="connectDumpTo('event')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div style="text-align:left"><div style="font-weight:600">Calendar Event</div><div style="font-size:12px;color:var(--text2)">Turn into a scheduled event</div></div>
+          </button>
+          <button class="btn-secondary" style="justify-content:flex-start;gap:12px;padding:14px 16px" onclick="connectDumpTo('note')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+            <div style="text-align:left"><div style="font-weight:600">New Note</div><div style="font-size:12px;color:var(--text2)">Expand into a full note</div></div>
+          </button>
+          <button class="btn-secondary" style="justify-content:flex-start;gap:12px;padding:14px 16px" onclick="connectDumpTo('task')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="20" height="20"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <div style="text-align:left"><div style="font-weight:600">Task / To-Do</div><div style="font-size:12px;color:var(--text2)">Add to today's tasks</div></div>
+          </button>
+          <button class="btn-secondary" style="justify-content:flex-start;gap:12px;padding:14px 16px" onclick="connectDumpTo('habit')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" width="20" height="20"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <div style="text-align:left"><div style="font-weight:600">Habit</div><div style="font-size:12px;color:var(--text2)">Link to an existing habit</div></div>
+          </button>
+          ${(()=>{ const d=(D.dumps||[]).find(d=>d.id===window._connectDumpId); return d?.connectedTo?`<button class="btn-secondary" style="justify-content:flex-start;gap:12px;padding:14px 16px;color:var(--danger)" onclick="disconnectDump()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><div style="text-align:left"><div style="font-weight:600">Remove Connection</div></div></button>`:''; })()}
+        </div>
+      </div>
+    </div>
+  `;
+  window._dumpTagSelected='Random';
+}
+function setDumpFilterTag(tag){ window._dumpTagSelected=tag; document.querySelectorAll('[id^="dtag-"]').forEach(el=>el.style.opacity='0.5'); const el=document.getElementById('dtag-'+tag.toLowerCase().replace('-','')); if(el) el.style.opacity='1'; }
+function setDumpFilter(t){ dumpFilter=t; renderBrainDump(); }
+function addDump(){
+  const text=document.getElementById('dump-input')?.value?.trim();
+  if(!text) return;
+  D.dumps=D.dumps||[];
+  D.dumps.unshift({id:uid(),text,tag:window._dumpTagSelected||'Random',date:today(),done:false});
+  document.getElementById('dump-input').value='';
+  save('Captured! 💡'); renderBrainDump();
+}
+function toggleDump(id){ const d=(D.dumps||[]).find(d=>d.id===id); if(d){d.done=!d.done;save();renderBrainDump();} }
+function deleteDump(id){ D.dumps=(D.dumps||[]).filter(d=>d.id!==id);save('Deleted');renderBrainDump(); }
+function clearDoneDumps(){ D.dumps=(D.dumps||[]).filter(d=>!d.done); save('Cleared ✓'); renderBrainDump(); }
+function toggleDumpAutoClear(){ D.dumpAutoClear=!D.dumpAutoClear; save(); renderBrainDump(); }
+
+// Connect dump entry to another part of the app
+function openDumpConnectModal(dumpId){
+  window._connectDumpId=dumpId;
+  document.getElementById('dump-connect-id').value=dumpId;
+  openModal('dump-connect-modal');
+}
+function connectDumpTo(type){
+  const dumpId=document.getElementById('dump-connect-id').value;
+  const d=(D.dumps||[]).find(d=>d.id===dumpId);
+  if(!d){ closeModal('dump-connect-modal'); return; }
+  if(type==='event'){
+    // Create a calendar event from the dump
+    if(!D.events) D.events=[];
+    const evId=uid();
+    D.events.push({id:evId,name:d.text.slice(0,60),date:today(),color:'blue',priority:'medium'});
+    d.connectedTo={type:'event',id:evId,label:'Calendar Event'};
+    save('Connected to Calendar ✓'); closeModal('dump-connect-modal');
+    updateCalBadge(); renderBrainDump();
+  } else if(type==='note'){
+    // Create a note from the dump
+    if(!D.notes) D.notes=[];
+    const noteId=uid();
+    D.notes.unshift({id:noteId,title:d.text.slice(0,40)||'From Brain Dump',content:'<p>'+d.text+'</p>',color:'#0EA5E9',created:Date.now(),updated:Date.now(),pinned:false,attachments:[]});
+    d.connectedTo={type:'note',id:noteId,label:'Note'};
+    save('Connected to Notes ✓'); closeModal('dump-connect-modal'); renderBrainDump();
+  } else if(type==='task'){
+    // Add to tasks
+    if(!D.tasks) D.tasks=[];
+    const taskId=uid();
+    D.tasks.push({id:taskId,name:d.text.slice(0,80),date:today(),priority:'medium',category:'personal',done:false,dumpId:d.id});
+    d.connectedTo={type:'task',id:taskId,label:'Task'};
+    save('Added to Tasks ✓'); closeModal('dump-connect-modal'); renderBrainDump();
+  } else if(type==='habit'){
+    // Link to an existing habit
+    const habits=D.habits||[];
+    if(!habits.length){ toast('No habits yet — create one first'); closeModal('dump-connect-modal'); return; }
+    const habitNames=habits.map((h,i)=>i+1+'. '+h.name).join('\n');
+    const idx=parseInt(prompt('Which habit?\n'+habitNames))-1;
+    if(isNaN(idx)||idx<0||idx>=habits.length){ closeModal('dump-connect-modal'); return; }
+    d.connectedTo={type:'habit',id:habits[idx].id,label:habits[idx].name};
+    save('Connected to Habit ✓'); closeModal('dump-connect-modal'); renderBrainDump();
+  }
+}
+function disconnectDump(){
+  const dumpId=document.getElementById('dump-connect-id').value;
+  const d=(D.dumps||[]).find(d=>d.id===dumpId);
+  if(d){ delete d.connectedTo; save('Connection removed'); }
+  closeModal('dump-connect-modal'); renderBrainDump();
+}
+function navToDumpConnection(dumpId){
+  const d=(D.dumps||[]).find(d=>d.id===dumpId);
+  if(!d?.connectedTo) return;
+  const {type,id}=d.connectedTo;
+  if(type==='event'||type==='task') nav('calendar');
+  else if(type==='note'){ nav('notes'); setTimeout(()=>openNoteEditor(id),200); }
+  else if(type==='habit') nav('habits');
+}
+
+// ==================== WORKOUT ====================
+function renderWorkout() {
+  const routines=D.routines||[];
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2>Workout</h2>
+      <div style="display:flex;gap:10px">
+        <button class="btn-secondary" onclick="openLogModal()">Log Session</button>
+        <button class="btn-primary" onclick="openRoutineModal()">+ New Routine</button>
+      </div>
+    </div>
+    
+    ${routines.length ? routines.map(r=>`
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <h3 style="flex:1">${r.name}</h3>
+          <span class="cat-badge">${r.day||'Any day'}</span>
+          <button class="btn-icon" onclick="openAddExerciseModal('${r.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="btn-icon" onclick="deleteRoutine('${r.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </div>
+        ${(r.exercises||[]).length ? r.exercises.map((e,i)=>`
+          <div class="exercise-item" draggable="true" data-routine="${r.id}" data-exid="${e.id}">
+            <div class="drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/></svg></div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px">${e.name}</div>
+              <div style="font-size:12px;color:var(--text3)">${e.sets} sets × ${e.reps} reps${e.weight?' @ '+e.weight+'kg':''} · Rest: ${e.rest||60}s</div>
+              ${e.desc?`<div style="font-size:12px;color:var(--text2);margin-top:2px">${e.desc}</div>`:''}
+              ${e.media?`<a href="${e.media}" target="_blank" style="font-size:12px;color:var(--accent)">📹 Reference</a>`:''}
+            </div>
+            <button class="btn-icon" onclick="deleteExercise('${r.id}','${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>`).join('') : '<p style="color:var(--text3);font-size:13px;padding:8px">No exercises yet</p>'}
+        <button class="btn-secondary" style="margin-top:10px" onclick="logRoutineSession('${r.id}')">▶ Start Session</button>
+      </div>`).join('') : `<div class="empty-state card"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M6.5 6.5h11M6.5 17.5h11M5 12h14"/></svg></div><p class="empty-title">No routines yet</p><button class="btn-primary" onclick="openRoutineModal()">Create Routine</button></div>`}
+    
+    ${(D.wkt||[]).length ? `
+    <div class="card" style="margin-top:20px">
+      <h3 style="margin-bottom:14px">Session History</h3>
+      ${(D.wkt||[]).slice().reverse().slice(0,8).map(w=>`
+        <div class="task-item">
+          <div style="flex:1">
+            <div style="font-weight:600">${w.routineName||'Workout'}</div>
+            <div style="font-size:12px;color:var(--text3)">${fmtDateFull(w.date)} · ${w.exercises?.length||0} exercises · ${w.duration||'—'}</div>
+            ${w.exercises?.length?`<div style="font-size:12px;color:var(--text2);margin-top:3px">${w.exercises.map(e=>e.name).join(', ')}</div>`:''}
+          </div>
+          <button class="btn-icon" onclick="deleteWorkout('${w.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </div>`).join('')}
+    </div>` : ''}
+    
+    <!-- Routine Modal -->
+    <div class="modal-overlay" id="routine-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>New Routine</h3><div class="modal-close" onclick="closeModal('routine-modal')">✕</div></div>
+        <div class="form-group"><label>Routine Name</label><input class="input" id="routine-name" placeholder="e.g. Upper Body"/></div>
+        <div class="form-group"><label>Day</label><select class="input" id="routine-day"><option value="">Any Day</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('routine-modal')">Cancel</button><button class="btn-primary" onclick="saveRoutine()">Create</button></div>
+      </div>
+    </div>
+    
+    <!-- Exercise Modal -->
+    <div class="modal-overlay" id="exercise-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>Add Exercise</h3><div class="modal-close" onclick="closeModal('exercise-modal')">✕</div></div>
+        <input type="hidden" id="ex-routine-id"/>
+        <div class="form-group"><label>Exercise Name</label><input class="input" id="ex-name" placeholder="e.g. Bench Press"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sets</label><input type="number" class="input" id="ex-sets" value="3" min="1"/></div>
+          <div class="form-group"><label>Reps</label><input type="number" class="input" id="ex-reps" value="10" min="1"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Weight (kg)</label><input type="number" class="input" id="ex-weight" placeholder="Optional"/></div>
+          <div class="form-group"><label>Rest (seconds)</label><input type="number" class="input" id="ex-rest" value="60"/></div>
+        </div>
+        <div class="form-group"><label>Description</label><input class="input" id="ex-desc" placeholder="Optional notes…"/></div>
+        <div class="form-group"><label>Media URL (image/YouTube)</label><input class="input" id="ex-media" placeholder="https://…"/></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('exercise-modal')">Cancel</button><button class="btn-primary" onclick="saveExercise()">Add Exercise</button></div>
+      </div>
+    </div>
+    
+    <!-- Log Session Modal -->
+    <div class="modal-overlay" id="log-modal">
+      <div class="modal">
+        <div class="modal-header"><h3 id="log-modal-title">Log Session</h3><div class="modal-close" onclick="closeModal('log-modal')">✕</div></div>
+        <div id="log-exercises"></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('log-modal')">Cancel</button><button class="btn-primary" onclick="saveLog()">Save Session</button></div>
+      </div>
+    </div>
+  `;
+  setTimeout(initWorkoutDrag, 50);
+}
+function initWorkoutDrag(){
+  let dragSrc=null;
+  document.querySelectorAll('.exercise-item[data-routine]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      dragSrc=el;
+      e.dataTransfer.effectAllowed='move';
+      setTimeout(()=>el.style.opacity='0.4',0);
+    });
+    el.addEventListener('dragend',()=>{
+      el.style.opacity='';
+      document.querySelectorAll('.exercise-item').forEach(x=>x.classList.remove('drag-over'));
+    });
+    el.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      if(el!==dragSrc){ el.classList.add('drag-over'); }
+    });
+    el.addEventListener('dragleave',()=>el.classList.remove('drag-over'));
+    el.addEventListener('drop',e=>{
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if(!dragSrc||dragSrc===el) return;
+      const rId=el.dataset.routine;
+      if(dragSrc.dataset.routine!==rId) return;
+      const r=D.routines?.find(r=>r.id===rId); if(!r) return;
+      const fromId=dragSrc.dataset.exid, toId=el.dataset.exid;
+      const fromIdx=r.exercises.findIndex(e=>e.id===fromId);
+      const toIdx=r.exercises.findIndex(e=>e.id===toId);
+      if(fromIdx<0||toIdx<0) return;
+      const [moved]=r.exercises.splice(fromIdx,1);
+      r.exercises.splice(toIdx,0,moved);
+      save(); renderWorkout();
+    });
+  });
+}
+function openRoutineModal(){ openModal('routine-modal'); }
+function saveRoutine(){
+  const name=document.getElementById('routine-name').value;
+  if(!name){toast('Name required');return;}
+  if(!D.routines) D.routines=[];
+  D.routines.push({id:uid(),name,day:document.getElementById('routine-day').value,exercises:[]});
+  save('Routine created'); closeModal('routine-modal'); renderWorkout();
+}
+function deleteRoutine(id){ if(!confirm('Delete routine?')) return; D.routines=(D.routines||[]).filter(r=>r.id!==id); save(); renderWorkout(); }
+function openAddExerciseModal(routineId){ document.getElementById('ex-routine-id').value=routineId; ['ex-name','ex-desc','ex-media','ex-weight'].forEach(id=>document.getElementById(id).value=''); document.getElementById('ex-sets').value=3; document.getElementById('ex-reps').value=10; document.getElementById('ex-rest').value=60; openModal('exercise-modal'); }
+function saveExercise(){
+  const routineId=document.getElementById('ex-routine-id').value;
+  const name=document.getElementById('ex-name').value;
+  if(!name){toast('Name required');return;}
+  const r=D.routines?.find(r=>r.id===routineId);
+  if(r){ r.exercises=r.exercises||[]; r.exercises.push({id:uid(),name,sets:document.getElementById('ex-sets').value,reps:document.getElementById('ex-reps').value,weight:document.getElementById('ex-weight').value,rest:document.getElementById('ex-rest').value,desc:document.getElementById('ex-desc').value,media:document.getElementById('ex-media').value}); }
+  save('Exercise added'); closeModal('exercise-modal'); renderWorkout();
+}
+function deleteExercise(routineId,exId){ const r=D.routines?.find(r=>r.id===routineId); if(r) r.exercises=(r.exercises||[]).filter(e=>e.id!==exId); save(); renderWorkout(); }
+let logRoutineId=null;
+function logRoutineSession(routineId){
+  logRoutineId=routineId;
+  const r=D.routines?.find(r=>r.id===routineId);
+  if(!r) return;
+  document.getElementById('log-modal-title').textContent=`Session: ${r.name}`;
+  const el=document.getElementById('log-exercises');
+  el.innerHTML=(r.exercises||[]).map(e=>`
+    <div class="exercise-item">
+      <div class="task-check" id="log-ex-${e.id}" onclick="toggleLogEx('${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg></div>
+      <div style="flex:1">
+        <div style="font-weight:600">${e.name}</div>
+        <div style="font-size:12px;color:var(--text3)">${e.sets} sets × ${e.reps} reps</div>
+      </div>
+    </div>`).join('');
+  window._logDone=[];
+  openModal('log-modal');
+}
+function toggleLogEx(id){ const el=document.getElementById('log-ex-'+id); if(!el) return; el.classList.toggle('done'); if(el.classList.contains('done')) window._logDone.push(id); else window._logDone=window._logDone.filter(x=>x!==id); el.querySelector('svg').style.opacity=el.classList.contains('done')?'1':'0'; }
+function openLogModal(){ if(!D.routines?.length){toast('Create a routine first');return;} logRoutineSession(D.routines[0].id); }
+function saveLog(){
+  const r=D.routines?.find(r=>r.id===logRoutineId);
+  if(!D.wkt) D.wkt=[];
+  D.wkt.push({id:uid(),routineName:r?.name,routineId:logRoutineId,date:today(),exercises:(r?.exercises||[]).filter(e=>window._logDone?.includes(e.id)).map(e=>({name:e.name,id:e.id}))});
+  save('Session logged! 💪'); closeModal('log-modal'); renderWorkout();
+}
+function deleteWorkout(id){ D.wkt=(D.wkt||[]).filter(w=>w.id!==id); save(); renderWorkout(); }
+
+// ==================== DIARY ====================
+let diaryUnlocked=false, diaryLockTimer=null;
+let currentDiaryId=null;
+
+function renderDiary() {
+  if(!diaryUnlocked) { renderDiaryPin(); return; }
+  renderDiaryList();
+}
+function renderDiaryPin() {
+  document.getElementById('content').innerHTML=`
+    <div id="diary-pin-screen">
+      <div style="font-size:48px">📒</div>
+      <h2>Diary</h2>
+      <p style="color:var(--text2)">Enter your PIN to unlock</p>
+      <div class="pin-dots">
+        <div class="pin-dot" id="pin-d0"></div><div class="pin-dot" id="pin-d1"></div>
+        <div class="pin-dot" id="pin-d2"></div><div class="pin-dot" id="pin-d3"></div>
+      </div>
+      <div id="pin-error" style="color:var(--danger);font-size:13px;min-height:18px"></div>
+      <div class="pin-pad">
+        ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<button class="pin-btn" onclick="pinKey('${k}')">${k}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  window._pinEntry='';
+}
+let _pinEntry='';
+function pinKey(k){
+  if(k==='⌫') { _pinEntry=_pinEntry.slice(0,-1); }
+  else if(k!=='') { _pinEntry+=k; }
+  // Update dots
+  for(let i=0;i<4;i++) { const d=document.getElementById('pin-d'+i); if(d) d.classList.toggle('filled',i<_pinEntry.length); }
+  if(_pinEntry.length===4) {
+    if(_pinEntry===(D.diaryPin||'1234')) { diaryUnlocked=true; _pinEntry=''; clearDiaryLock(); renderDiaryList(); }
+    else { document.getElementById('pin-error').textContent='Wrong PIN. Try again.'; _pinEntry=''; for(let i=0;i<4;i++){const d=document.getElementById('pin-d'+i);if(d)d.classList.remove('filled');} }
+  }
+}
+function clearDiaryLock(){ clearTimeout(diaryLockTimer); diaryLockTimer=setTimeout(()=>{ diaryUnlocked=false; if(currentPage==='diary') renderDiary(); },30*60*1000); }
+function renderDiaryList(){
+  const entries=(D.diary||[]).slice().sort((a,b)=>b.date?.localeCompare(a.date));
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2>My Diary</h2>
+      <div style="display:flex;gap:10px">
+        <button class="btn-secondary" onclick="changeDiaryPin()">Change PIN</button>
+        <button class="btn-primary" onclick="openDiaryEditor(null)">+ New Entry</button>
+      </div>
+    </div>
+    ${entries.length ? entries.map(e=>`
+      <div class="card card-sm" style="margin-bottom:10px;cursor:pointer" onclick="openDiaryEditor('${e.id}')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:24px">${e.mood||'😊'}</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">${fmtDateFull(e.date)}</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:2px">${e.content?.replace(/<[^>]+>/g,'')?.slice(0,80)||'...'}</div>
+          </div>
+          ${e.tags?.length?`<div style="display:flex;gap:4px">${e.tags.map(t=>`<span class="cat-badge">${t}</span>`).join('')}</div>`:''}
+        </div>
+      </div>`).join('') : `<div class="empty-state card"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/></svg></div><p class="empty-title">No entries yet</p><p class="empty-sub">Start journaling your thoughts and feelings</p><button class="btn-primary" onclick="openDiaryEditor(null)">Write First Entry</button></div>`}
+  `;
+}
+function openDiaryEditor(id){
+  currentDiaryId=id;
+  const e=id?(D.diary||[]).find(e=>e.id===id):null;
+  document.getElementById('diary-entry-date').textContent=fmtDateFull(e?.date||Date.now());
+  document.getElementById('diary-mood').value=e?.mood||'😊';
+  document.getElementById('diary-content-area').innerHTML=e?.content||'';
+  document.getElementById('diary-editor').style.transform='translateY(0)';
+}
+function closeDiaryEditor(){ document.getElementById('diary-editor').style.transform='translateY(100%)'; }
+function saveDiaryEntry(){
+  const id=currentDiaryId||uid();
+  const entry={ id, date:today(), mood:document.getElementById('diary-mood').value, content:document.getElementById('diary-content-area').innerHTML, tags:[] };
+  if(!D.diary) D.diary=[];
+  const idx=D.diary.findIndex(e=>e.id===id);
+  if(idx>=0) D.diary[idx]=entry; else D.diary.unshift(entry);
+  save('Entry saved ✓'); closeDiaryEditor(); renderDiaryList();
+}
+function changeDiaryPin(){ const np=prompt('New PIN (4 digits):'); if(np&&/^\d{4}$/.test(np)){ D.diaryPin=np; save('PIN changed'); toast('PIN updated'); } else if(np) toast('PIN must be 4 digits'); }
+
+// ==================== BIBLE ====================
+const BIBLE_VERSES=[
+  {text:"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.",ref:"Jeremiah 29:11"},
+  {text:"I can do all things through Christ who strengthens me.",ref:"Philippians 4:13"},
+  {text:"Trust in the Lord with all your heart and lean not on your own understanding.",ref:"Proverbs 3:5"},
+  {text:"The Lord is my shepherd; I shall not want.",ref:"Psalm 23:1"},
+  {text:"Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.",ref:"Joshua 1:9"},
+  {text:"And we know that in all things God works for the good of those who love him.",ref:"Romans 8:28"},
+  {text:"For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",ref:"John 3:16"},
+  {text:"The Lord is my light and my salvation—whom shall I fear?",ref:"Psalm 27:1"},
+  {text:"Come to me, all you who are weary and burdened, and I will give you rest.",ref:"Matthew 11:28"},
+  {text:"I have told you these things, so that in me you may have peace.",ref:"John 16:33"},
+  {text:"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.",ref:"Philippians 4:6"},
+  {text:"The heart of man plans his way, but the Lord establishes his steps.",ref:"Proverbs 16:9"},
+  {text:"Delight yourself in the Lord, and he will give you the desires of your heart.",ref:"Psalm 37:4"},
+  {text:"For where two or three gather in my name, there am I with them.",ref:"Matthew 18:20"},
+  {text:"But those who hope in the Lord will renew their strength.",ref:"Isaiah 40:31"},
+  {text:"Be still, and know that I am God.",ref:"Psalm 46:10"},
+  {text:"No temptation has overtaken you except what is common to mankind. And God is faithful.",ref:"1 Corinthians 10:13"},
+  {text:"This is the day the Lord has made; let us rejoice and be glad in it.",ref:"Psalm 118:24"},
+  {text:"Create in me a pure heart, O God, and renew a steadfast spirit within me.",ref:"Psalm 51:10"},
+  {text:"Ask and it will be given to you; seek and you will find; knock and the door will be opened to you.",ref:"Matthew 7:7"},
+  {text:"For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.",ref:"2 Timothy 1:7"},
+  {text:"Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",ref:"1 Corinthians 13:4"},
+  {text:"Give thanks in all circumstances; for this is God's will for you in Christ Jesus.",ref:"1 Thessalonians 5:18"},
+  {text:"The Lord bless you and keep you; the Lord make his face shine on you.",ref:"Numbers 6:24-25"},
+  {text:"Greater love has no one than this: to lay down one's life for one's friends.",ref:"John 15:13"},
+  {text:"Your word is a lamp for my feet, a light on my path.",ref:"Psalm 119:105"},
+  {text:"Search me, God, and know my heart; test me and know my anxious thoughts.",ref:"Psalm 139:23"},
+  {text:"But seek first his kingdom and his righteousness, and all these things will be given to you as well.",ref:"Matthew 6:33"},
+  {text:"I have hidden your word in my heart that I might not sin against you.",ref:"Psalm 119:11"},
+  {text:"My grace is sufficient for you, for my power is made perfect in weakness.",ref:"2 Corinthians 12:9"},
+];
+function getBibleVerse(){ return BIBLE_VERSES[dayOfYear()%BIBLE_VERSES.length]; }
+// Auto-refresh bible at midnight
+const now_=new Date(); const msToMidnight=new Date(now_.getFullYear(),now_.getMonth(),now_.getDate()+1,0,0,0)-now_;
+setTimeout(()=>{ if(currentPage==='bible'||currentPage==='dashboard') renderPage(currentPage); setInterval(()=>{ if(currentPage==='bible'||currentPage==='dashboard') renderPage(currentPage); },86400000); },msToMidnight);
+
+function renderBible(){
+  const verse=getBibleVerse();
+  const todayStr=today();
+  const bibleCheck=D.bible?.checklist?.[todayStr]||{};
+  const streak=calcBibleStreak();
+  document.getElementById('content').innerHTML=`
+    <div class="dashboard-grid">
+      <div class="card dashboard-full">
+        <h3 style="margin-bottom:16px">Today's Verse</h3>
+        <div class="verse-card">
+          <div class="verse-text">"${verse.text}"</div>
+          <div class="verse-ref">— ${verse.ref}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:6px">7-Day Streak</div>
+            <div style="display:flex;gap:6px">
+              ${getLast7Days().map(d=>{ const c=D.bible?.checklist?.[d]; const done=c&&(c.read||c.studied||c.prayed); return `<div class="streak-dot${done?' done':''}" style="width:12px;height:12px" title="${fmtDate(d)}"></div>`; }).join('')}
+            </div>
+          </div>
+          <div style="font-size:24px;font-weight:700;font-family:'DM Serif Display',serif;color:var(--accent)">${streak} days</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+          ${['Read','Studied','Prayed'].map(a=>`
+            <button class="btn-${bibleCheck[a.toLowerCase()]?'primary':'secondary'}" onclick="bibleCheck_('${a.toLowerCase()}');renderBible()">
+              ${bibleCheck[a.toLowerCase()]?'✓ '+a:a}
+            </button>`).join('')}
+        </div>
+      </div>
+      
+      <!-- SOAP Journal -->
+      <div class="card">
+        <h3 style="margin-bottom:16px">SOAP Journal</h3>
+        ${(D.bible?.soap||[]).length ? D.bible.soap.slice(0,3).map(s=>`
+          <div style="padding:10px;border-radius:10px;background:var(--bg2);margin-bottom:8px;cursor:pointer" onclick="openSoapModal('${s.id}')">
+            <div style="font-weight:600">${s.passage||'Passage'}</div>
+            <div style="font-size:12px;color:var(--text3)">${fmtDate(s.date)}</div>
+          </div>`).join('') : ''}
+        <button class="btn-primary" onclick="openSoapModal(null)">+ New SOAP Entry</button>
+      </div>
+      
+      <!-- Prayer -->
+      <div class="card">
+        <h3 style="margin-bottom:16px">Prayer Reflection</h3>
+        ${(D.bible?.prayer||[]).slice(0,2).map((p,i)=>`
+          <div style="margin-bottom:12px;padding:10px;border-radius:10px;background:var(--bg2)">
+            <div style="font-weight:600;font-size:13px">Set ${i+1}</div>
+            ${p.answers?.slice(0,1).map((a,j)=>`<div style="font-size:13px;color:var(--text2);margin-top:4px">Q${j+1}: ${a||'—'}</div>`).join('')||''}
+          </div>`).join('')}
+        <button class="btn-secondary" onclick="openPrayerModal()">Open Prayer Journal</button>
+      </div>
+    </div>
+    
+    <!-- SOAP Modal -->
+    <div class="modal-overlay" id="soap-modal">
+      <div class="modal" style="max-width:560px">
+        <div class="modal-header"><h3>SOAP Journal</h3><div class="modal-close" onclick="closeModal('soap-modal')">✕</div></div>
+        <input type="hidden" id="soap-id"/>
+        <div class="form-group"><label>Passage Reference</label><input class="input" id="soap-passage" placeholder="e.g. John 3:16-17"/></div>
+        <div class="soap-section"><div class="soap-label">S — Scripture</div><textarea class="input" id="soap-s" rows="2" placeholder="Key verse or passage…"></textarea></div>
+        <div class="soap-section"><div class="soap-label">O — Observation</div><textarea class="input" id="soap-o" rows="2" placeholder="What do you observe?"></textarea></div>
+        <div class="soap-section"><div class="soap-label">A — Application</div><textarea class="input" id="soap-a" rows="2" placeholder="How does it apply to you?"></textarea></div>
+        <div class="soap-section"><div class="soap-label">P — Prayer</div><textarea class="input" id="soap-p" rows="2" placeholder="Your prayer response…"></textarea></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('soap-modal')">Cancel</button><button class="btn-primary" onclick="saveSoap()">Save</button></div>
+      </div>
+    </div>
+    
+    <!-- Prayer Modal -->
+    <div class="modal-overlay" id="prayer-modal">
+      <div class="modal" style="max-width:600px">
+        <div class="modal-header"><h3>Prayer Journal</h3><div class="modal-close" onclick="closeModal('prayer-modal')">✕</div></div>
+        <div id="prayer-sets"></div>
+        <div class="modal-footer"><button class="btn-primary" onclick="savePrayer()">Save</button></div>
+      </div>
+    </div>
+  `;
+}
+const PRAYER_QUESTIONS=[
+  ['What are you grateful for today?','What do you need from God right now?','Who can you pray for today?'],
+  ['What worries are you carrying?','What promise from Scripture can you hold onto?','What do you need to surrender to God?'],
+  ['How did you experience God today?','What sin do you need to confess?','What is God calling you to do?'],
+  ['Who in your family needs prayer?','What situation feels out of control?','How can you be a blessing to someone today?'],
+  ['What spiritual discipline do you need to strengthen?','What fear do you need to release?','What miracle are you trusting God for?'],
+  ['What is your prayer for this nation?','How has God answered a past prayer?','What dream has God placed in your heart?'],
+  ['What does "walking with God" look like for you today?','What is the Holy Spirit prompting you toward?','How will you close this week in gratitude?'],
+];
+function openSoapModal(id){
+  const s=id?(D.bible?.soap||[]).find(s=>s.id===id):null;
+  document.getElementById('soap-id').value=id||'';
+  document.getElementById('soap-passage').value=s?.passage||'';
+  document.getElementById('soap-s').value=s?.s||'';
+  document.getElementById('soap-o').value=s?.o||'';
+  document.getElementById('soap-a').value=s?.a||'';
+  document.getElementById('soap-p').value=s?.p||'';
+  openModal('soap-modal');
+}
+function saveSoap(){
+  if(!D.bible) D.bible={soap:[],prayer:[],checklist:{}};
+  const id=document.getElementById('soap-id').value||uid();
+  const entry={id,passage:document.getElementById('soap-passage').value,s:document.getElementById('soap-s').value,o:document.getElementById('soap-o').value,a:document.getElementById('soap-a').value,p:document.getElementById('soap-p').value,date:today()};
+  const idx=(D.bible.soap||[]).findIndex(s=>s.id===id);
+  if(idx>=0) D.bible.soap[idx]=entry; else { if(!D.bible.soap) D.bible.soap=[]; D.bible.soap.unshift(entry); }
+  save('SOAP entry saved'); closeModal('soap-modal'); renderBible();
+}
+function openPrayerModal(){
+  if(!D.bible) D.bible={soap:[],prayer:[],checklist:{}};
+  if(!D.bible.prayer) D.bible.prayer=[];
+  // Ensure 7 sets
+  while(D.bible.prayer.length<7) D.bible.prayer.push({answers:['','','']});
+  const el=document.getElementById('prayer-sets');
+  el.innerHTML=PRAYER_QUESTIONS.map((qs,i)=>`
+    <div style="margin-bottom:16px;padding:14px;border-radius:12px;background:var(--bg2)">
+      <div style="font-weight:700;margin-bottom:10px;color:var(--accent)">Set ${i+1}</div>
+      ${qs.map((q,j)=>`<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;margin-bottom:4px">${q}</div><textarea class="input input-sm" rows="2" id="prayer-${i}-${j}">${D.bible.prayer[i]?.answers?.[j]||''}</textarea></div>`).join('')}
+    </div>`).join('');
+  openModal('prayer-modal');
+}
+function savePrayer(){
+  for(let i=0;i<7;i++){ if(!D.bible.prayer[i]) D.bible.prayer[i]={answers:[]}; D.bible.prayer[i].answers=PRAYER_QUESTIONS[i].map((_,j)=>document.getElementById(`prayer-${i}-${j}`)?.value||''); }
+  save('Prayer saved'); closeModal('prayer-modal'); toast('Prayer journal saved ✓');
+}
+
+// ==================== MONEY ====================
+let moneyTab='overview';
+function renderMoney(){
+  const expenses=D.money?.expenses||[];
+  const budget=D.money?.budget||[];
+  const wishlist=D.money?.wishlist||[];
+  const debt=D.money?.debt||[];
+  const savings=D.money?.savings||[];
+  document.getElementById('content').innerHTML=`
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <div class="tab-bar">
+        ${[['overview','Overview'],['expenses','Expenses'],['budget','Budget'],['wishlist','Wishlist'],['debt','Debt'],['savings','Savings']].map(([k,l])=>`<button class="tab-btn${moneyTab===k?' active':''}" onclick="setMoneyTab('${k}')">${l}</button>`).join('')}
+      </div>
+    </div>
+    <div id="money-content"></div>
+    ${renderMoneyModals()}
+  `;
+  renderMoneyTab();
+}
+function setMoneyTab(t){ moneyTab=t; renderMoney(); }
+function renderMoneyTab(){
+  const fns={overview:renderMoneyOverview,expenses:renderMoneyExpenses,budget:renderMoneyBudget,wishlist:renderMoneyWishlist,debt:renderMoneyDebt,savings:renderMoneySavings};
+  if(fns[moneyTab]) fns[moneyTab]();
+}
+const PESO='₱';
+function fmt_=(n)=>PESO+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const CATS=['Food','Transport','Shopping','Entertainment','Health','Education','Utilities','Others'];
+function renderMoneyOverview(){
+  const expenses=D.money?.expenses||[];
+  const income=(D.money?.income||[]).reduce((s,i)=>s+Number(i.amount||0),0);
+  const totalExp=expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  const net=income-totalExp;
+  // By category
+  const catTotals={};
+  expenses.forEach(e=>{ catTotals[e.category||'Others']=(catTotals[e.category||'Others']||0)+Number(e.amount||0); });
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+      <div class="card money-stat"><div class="money-amount" style="color:var(--success)">${fmt_(income)}</div><div class="money-label">Total Income</div></div>
+      <div class="card money-stat"><div class="money-amount" style="color:var(--danger)">${fmt_(totalExp)}</div><div class="money-label">Total Expenses</div></div>
+      <div class="card money-stat"><div class="money-amount" style="color:${net>=0?'var(--accent)':'var(--danger)'}">${fmt_(net)}</div><div class="money-label">Net Balance</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap">
+      <div class="card">
+        <h3 style="margin-bottom:14px">Spending by Category</h3>
+        ${Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>{ const pct=totalExp?Math.round(amt/totalExp*100):0; return `<div class="budget-bar-wrap"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${cat}</span><span>${fmt_(amt)} (${pct}%)</span></div><div class="budget-bar"><div class="budget-bar-fill" style="width:${pct}%"></div></div></div>`; }).join('') || '<p style="color:var(--text3);text-align:center;padding:20px;font-size:13px">No expenses yet</p>'}
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>Add Income</h3></div>
+        <div class="form-group"><label>Amount</label><input type="number" class="input" id="income-amount" placeholder="0.00"/></div>
+        <div class="form-group"><label>Source</label><input class="input" id="income-source" placeholder="Salary, Freelance…"/></div>
+        <div class="form-group"><label>Date</label><input type="date" class="input" id="income-date" value="${today()}"/></div>
+        <button class="btn-primary" onclick="addIncome()">Add Income</button>
+        ${(D.money?.income||[]).slice(-3).reverse().map(i=>`<div class="task-item" style="margin-top:8px"><div style="flex:1"><div style="font-weight:500">${i.source}</div><div style="font-size:12px;color:var(--text3)">${fmtDate(i.date)}</div></div><div style="font-weight:700;color:var(--success)">${fmt_(i.amount)}</div></div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+function addIncome(){ const amt=document.getElementById('income-amount')?.value; if(!amt){toast('Amount required');return;} if(!D.money.income) D.money.income=[]; D.money.income.push({id:uid(),amount:Number(amt),source:document.getElementById('income-source').value||'Income',date:document.getElementById('income-date').value||today()}); save('Income added'); renderMoneyOverview(); }
+function renderMoneyExpenses(){
+  const expenses=D.money?.expenses||[];
+  let filterCat=window._expCat||'all', filterMonth=window._expMonth||'', filterMethod=window._expMethod||'all';
+  const filtered=expenses.filter(e=>(filterCat==='all'||e.category===filterCat)&&(!filterMonth||e.date?.startsWith(filterMonth))&&(filterMethod==='all'||e.method===filterMethod));
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+      <select class="input input-sm" style="width:130px" onchange="setExpFilter('cat',this.value)">
+        <option value="all">All Categories</option>
+        ${CATS.map(c=>`<option${filterCat===c?' selected':''}>${c}</option>`).join('')}
+      </select>
+      <input type="month" class="input input-sm" style="width:150px" value="${filterMonth}" onchange="setExpFilter('month',this.value)"/>
+      <select class="input input-sm" style="width:140px" onchange="setExpFilter('method',this.value)">
+        <option value="all">All Methods</option>
+        ${['Cash','GCash','Card','Bank Transfer'].map(m=>`<option${filterMethod===m?' selected':''}>${m}</option>`).join('')}
+      </select>
+      <button class="btn-primary" style="margin-left:auto" onclick="openExpenseModal()">+ Add Expense</button>
+    </div>
+    ${filtered.length ? filtered.slice().reverse().map(e=>`
+      <div class="task-item">
+        <div style="flex:1">
+          <div style="font-weight:500">${e.name||e.category}</div>
+          <div style="font-size:12px;color:var(--text3)">${fmtDate(e.date)} · ${e.category} · ${e.method||'Cash'}</div>
+        </div>
+        <div style="font-weight:700;color:var(--danger);font-size:15px">${fmt_(e.amount)}</div>
+        <button class="btn-icon" onclick="deleteExpense('${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+      </div>`).join('') : `<div class="empty-state card"><p class="empty-title">No expenses found</p></div>`}
+  `;
+}
+function setExpFilter(k,v){ if(k==='cat') window._expCat=v; if(k==='month') window._expMonth=v; if(k==='method') window._expMethod=v; renderMoneyExpenses(); }
+function openExpenseModal(){ openModal('expense-modal'); document.getElementById('exp-date').value=today(); }
+function saveExpense(){ const amt=document.getElementById('exp-amount').value; const name=document.getElementById('exp-name').value; if(!amt){toast('Amount required');return;} if(!D.money.expenses) D.money.expenses=[]; D.money.expenses.push({id:uid(),name,amount:Number(amt),category:document.getElementById('exp-category').value,date:document.getElementById('exp-date').value,method:document.getElementById('exp-method').value}); save('Expense added'); closeModal('expense-modal'); renderMoneyExpenses(); }
+function deleteExpense(id){ D.money.expenses=(D.money.expenses||[]).filter(e=>e.id!==id); save(); renderMoneyExpenses(); }
+function renderMoneyBudget(){
+  const budget=D.money?.budget||[];
+  const expenses=D.money?.expenses||[];
+  const curMonth=new Date().toISOString().slice(0,7);
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-primary" onclick="openBudgetModal()">+ Set Budget</button></div>
+    ${budget.length ? budget.map(b=>{ const spent=expenses.filter(e=>e.category===b.category&&e.date?.startsWith(curMonth)).reduce((s,e)=>s+Number(e.amount||0),0); const pct=b.limit?Math.min(100,Math.round(spent/b.limit*100)):0; const over=spent>Number(b.limit); return `<div class="card card-sm" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-weight:600">${b.category}<span style="color:${over?'var(--danger)':'var(--text2)'};font-size:13px">${fmt_(spent)} / ${fmt_(b.limit)}</span></div><div class="budget-bar" style="margin-top:8px"><div class="budget-bar-fill${over?' over':''}" style="width:${pct}%"></div></div><div style="font-size:12px;color:var(--text3);margin-top:4px">${pct}% used${over?' — OVER BUDGET':''}</div></div>`; }).join('') : `<div class="empty-state card"><p class="empty-title">No budgets set</p></div>`}
+  `;
+}
+function openBudgetModal(){ openModal('budget-modal'); }
+function saveBudget(){ const cat=document.getElementById('budget-cat').value; const limit=document.getElementById('budget-limit').value; if(!limit){toast('Limit required');return;} if(!D.money.budget) D.money.budget=[]; const idx=D.money.budget.findIndex(b=>b.category===cat); if(idx>=0) D.money.budget[idx].limit=Number(limit); else D.money.budget.push({id:uid(),category:cat,limit:Number(limit)}); save('Budget saved'); closeModal('budget-modal'); renderMoneyBudget(); }
+function renderMoneyWishlist(){
+  const list=D.money?.wishlist||[];
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-primary" onclick="openWishModal()">+ Add Item</button></div>
+    ${list.length ? list.map(w=>`
+      <div class="task-item${w.bought?' done':''}">
+        <div class="task-check${w.bought?' done':''}" onclick="toggleWish('${w.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div style="flex:1">
+          <div style="font-weight:500">${w.name}</div>
+          <div style="font-size:12px;color:var(--text3)">${fmt_(w.price)} · Priority: ${w.priority||'medium'}</div>
+        </div>
+        <span class="wishlist-badge badge-${w.type||'want'}">${w.type||'want'}</span>
+        <button class="btn-icon" onclick="deleteWish('${w.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+      </div>`).join('') : `<div class="empty-state card"><p class="empty-title">Wishlist is empty</p></div>`}
+  `;
+}
+function openWishModal(){ openModal('wish-modal'); }
+function saveWish(){ const name=document.getElementById('wish-name').value; if(!name){toast('Name required');return;} if(!D.money.wishlist) D.money.wishlist=[]; D.money.wishlist.push({id:uid(),name,price:document.getElementById('wish-price').value,type:document.getElementById('wish-type').value,priority:document.getElementById('wish-priority').value,bought:false}); save('Added to wishlist'); closeModal('wish-modal'); renderMoneyWishlist(); }
+function toggleWish(id){ const w=(D.money?.wishlist||[]).find(w=>w.id===id); if(w){w.bought=!w.bought;save();renderMoneyWishlist();} }
+function deleteWish(id){ D.money.wishlist=(D.money.wishlist||[]).filter(w=>w.id!==id); save(); renderMoneyWishlist(); }
+function renderMoneyDebt(){
+  const debt=D.money?.debt||[];
+  const iOwe=debt.filter(d=>d.type==='owe');
+  const owedMe=debt.filter(d=>d.type==='owed');
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-primary" onclick="openDebtModal()">+ Add Debt</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <h3 style="color:var(--danger);margin-bottom:12px">I Owe (${fmt_(iOwe.reduce((s,d)=>s+Number(d.amount||0),0))})</h3>
+        ${iOwe.map(d=>renderDebtItem(d)).join('')||'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px">No debts 🎉</p>'}
+      </div>
+      <div>
+        <h3 style="color:var(--success);margin-bottom:12px">Owed to Me (${fmt_(owedMe.reduce((s,d)=>s+Number(d.amount||0),0))})</h3>
+        ${owedMe.map(d=>renderDebtItem(d)).join('')||'<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px">No one owes you</p>'}
+      </div>
+    </div>
+  `;
+}
+function renderDebtItem(d){ const overdue=d.due&&d.due<today()&&!d.paid; return `<div class="card card-sm" style="margin-bottom:8px${overdue?';border-left:3px solid var(--danger)':''}"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">${d.name}</div><div style="font-size:12px;color:var(--text3)">${d.due?'Due: '+fmtDate(d.due):''} ${overdue?'<span style="color:var(--danger);font-weight:700">OVERDUE</span>':''}</div></div><div><div style="font-weight:700;font-size:15px">${fmt_(d.amount)}</div><span class="${d.type==='owe'?'debt-badge-owe':'debt-badge-owed'}">${d.type==='owe'?'I Owe':'Owed to Me'}</span></div></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn-secondary" style="font-size:12px;padding:5px 12px" onclick="toggleDebt('${d.id}')">${d.paid?'Unpay':'Mark Paid'}</button><button class="btn-icon" onclick="deleteDebt('${d.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div></div>`; }
+function openDebtModal(){ openModal('debt-modal'); }
+function saveDebt(){ const name=document.getElementById('debt-name').value; if(!name){toast('Name required');return;} if(!D.money.debt) D.money.debt=[]; D.money.debt.push({id:uid(),name,amount:document.getElementById('debt-amount').value,type:document.getElementById('debt-type').value,due:document.getElementById('debt-due').value,paid:false}); save('Debt added'); closeModal('debt-modal'); renderMoneyDebt(); }
+function toggleDebt(id){ const d=(D.money?.debt||[]).find(d=>d.id===id); if(d){d.paid=!d.paid;save();renderMoneyDebt();} }
+function deleteDebt(id){ D.money.debt=(D.money.debt||[]).filter(d=>d.id!==id); save(); renderMoneyDebt(); }
+function renderMoneySavings(){
+  const savings=D.money?.savings||[];
+  document.getElementById('money-content').innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn-primary" onclick="openSavingsModal()">+ New Goal</button></div>
+    ${savings.length ? savings.map(s=>{ const pct=s.target?Math.min(100,Math.round(s.saved/s.target*100)):0; return `<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3>${s.name}</h3><div style="text-align:right"><div style="font-size:18px;font-weight:700;color:var(--accent)">${fmt_(s.saved)}</div><div style="font-size:12px;color:var(--text3)">of ${fmt_(s.target)}</div></div></div><div class="savings-bar"><div class="savings-bar-fill" style="width:${pct}%"></div></div><div style="font-size:13px;color:var(--text3);margin-top:4px">${pct}% saved · ${fmt_(s.target-s.saved)} to go</div><div style="display:flex;gap:8px;margin-top:10px"><input type="number" class="input input-sm" id="add-savings-${s.id}" placeholder="Add amount" style="flex:1"/><button class="btn-primary" onclick="addToSavings('${s.id}')">Add Funds</button><button class="btn-icon" onclick="deleteSavings('${s.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div></div>`; }).join('') : `<div class="empty-state card"><p class="empty-title">No savings goals</p><button class="btn-primary" onclick="openSavingsModal()">Create Goal</button></div>`}
+  `;
+}
+function openSavingsModal(){ openModal('savings-modal'); }
+function saveSavingsGoal(){ const name=document.getElementById('sav-name').value; if(!name){toast('Name required');return;} if(!D.money.savings) D.money.savings=[]; D.money.savings.push({id:uid(),name,target:Number(document.getElementById('sav-target').value)||0,saved:0}); save('Goal created'); closeModal('savings-modal'); renderMoneySavings(); }
+function addToSavings(id){ const s=D.money.savings?.find(s=>s.id===id); const amt=Number(document.getElementById('add-savings-'+id)?.value||0); if(s&&amt>0){s.saved+=amt;save('Saved '+fmt_(amt));renderMoneySavings();} }
+function deleteSavings(id){ D.money.savings=(D.money.savings||[]).filter(s=>s.id!==id); save(); renderMoneySavings(); }
+
+function renderMoneyModals(){
+  return `
+    <!-- Expense Modal -->
+    <div class="modal-overlay" id="expense-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>Add Expense</h3><div class="modal-close" onclick="closeModal('expense-modal')">✕</div></div>
+        <div class="form-group"><label>Description</label><input class="input" id="exp-name" placeholder="Coffee, Grab, etc."/></div>
+        <div class="form-group"><label>Amount (₱)</label><input type="number" class="input" id="exp-amount" placeholder="0.00" min="0" step="0.01"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Category</label><select class="input" id="exp-category">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+          <div class="form-group"><label>Date</label><input type="date" class="input" id="exp-date"/></div>
+        </div>
+        <div class="form-group"><label>Payment Method</label><select class="input" id="exp-method"><option>Cash</option><option>GCash</option><option>Card</option><option>Bank Transfer</option></select></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('expense-modal')">Cancel</button><button class="btn-primary" onclick="saveExpense()">Add Expense</button></div>
+      </div>
+    </div>
+    <!-- Budget Modal -->
+    <div class="modal-overlay" id="budget-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>Set Monthly Budget</h3><div class="modal-close" onclick="closeModal('budget-modal')">✕</div></div>
+        <div class="form-group"><label>Category</label><select class="input" id="budget-cat">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div class="form-group"><label>Monthly Limit (₱)</label><input type="number" class="input" id="budget-limit" placeholder="5000"/></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('budget-modal')">Cancel</button><button class="btn-primary" onclick="saveBudget()">Save</button></div>
+      </div>
+    </div>
+    <!-- Wishlist Modal -->
+    <div class="modal-overlay" id="wish-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>Add to Wishlist</h3><div class="modal-close" onclick="closeModal('wish-modal')">✕</div></div>
+        <div class="form-group"><label>Item Name</label><input class="input" id="wish-name" placeholder="Item name"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Price (₱)</label><input type="number" class="input" id="wish-price" placeholder="0.00"/></div>
+          <div class="form-group"><label>Type</label><select class="input" id="wish-type"><option value="need">Need</option><option value="want" selected>Want</option></select></div>
+        </div>
+        <div class="form-group"><label>Priority</label><select class="input" id="wish-priority"><option>high</option><option selected>medium</option><option>low</option></select></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('wish-modal')">Cancel</button><button class="btn-primary" onclick="saveWish()">Add</button></div>
+      </div>
+    </div>
+    <!-- Debt Modal -->
+    <div class="modal-overlay" id="debt-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>Add Debt</h3><div class="modal-close" onclick="closeModal('debt-modal')">✕</div></div>
+        <div class="form-group"><label>Name / Person</label><input class="input" id="debt-name" placeholder="e.g. Juan de la Cruz"/></div>
+        <div class="form-row">
+          <div class="form-group"><label>Amount (₱)</label><input type="number" class="input" id="debt-amount" placeholder="0.00"/></div>
+          <div class="form-group"><label>Type</label><select class="input" id="debt-type"><option value="owe">I Owe</option><option value="owed">Owed to Me</option></select></div>
+        </div>
+        <div class="form-group"><label>Due Date</label><input type="date" class="input" id="debt-due"/></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('debt-modal')">Cancel</button><button class="btn-primary" onclick="saveDebt()">Add</button></div>
+      </div>
+    </div>
+    <!-- Savings Modal -->
+    <div class="modal-overlay" id="savings-modal">
+      <div class="modal">
+        <div class="modal-header"><h3>New Savings Goal</h3><div class="modal-close" onclick="closeModal('savings-modal')">✕</div></div>
+        <div class="form-group"><label>Goal Name</label><input class="input" id="sav-name" placeholder="e.g. New Laptop"/></div>
+        <div class="form-group"><label>Target Amount (₱)</label><input type="number" class="input" id="sav-target" placeholder="10000"/></div>
+        <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('savings-modal')">Cancel</button><button class="btn-primary" onclick="saveSavingsGoal()">Create</button></div>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== CLOSE MODALS ON OVERLAY CLICK ====================
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+});
+
+// ==================== NOTIFICATION PERMISSION ====================
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+// ==================== SEED DEFAULTS ====================
+function seedDefaults(){
+  if(D.seeded) return;
+  D.habits=[
+    {id:uid(),name:'Morning Prayer',icon:'🙏',goal:7,duration:''},
+    {id:uid(),name:'Read Bible',icon:'📖',goal:7,duration:'15'},
+    {id:uid(),name:'Exercise',icon:'💪',goal:5,duration:'30'},
+    {id:uid(),name:'Read Books',icon:'📚',goal:5,duration:'20'},
+  ];
+  D.seeded=true;
+  save();
+}
+
+// ==================== INIT ====================
+loadData();
+seedDefaults();
+if(D.dark) document.documentElement.setAttribute('data-theme','dark');
+updateCalBadge();
+initFirebase();
+</script>
+
+<!-- 
+==========================================================================
+  FIREBASE SETUP INSTRUCTIONS
+==========================================================================
+  1. Go to https://console.firebase.google.com
+  2. Create a new project (or use existing)
+  3. Enable Authentication → Sign-in method → Google + Email/Password
+  4. Create Firestore Database → Start in production mode
+  5. Set Firestore rules:
+     rules_version = '2';
+     service cloud.firestore {
+       match /databases/{database}/documents {
+         match /users/{userId} {
+           allow read, write: if request.auth != null && request.auth.uid == userId;
+         }
+       }
+     }
+  6. Go to Project Settings → Your Apps → Add Web App
+  7. Copy the firebaseConfig object
+  8. Replace the firebaseConfig object in initFirebase() above
+  9. Add Firebase SDK scripts below (uncomment them)
+  10. Add your GitHub Pages domain to Firebase → Authentication → 
+      Settings → Authorized Domains (e.g., yourname.github.io)
+
+  GITHUB PAGES DEPLOYMENT:
+  1. Rename this file to index.html
+  2. Push to GitHub repository
+  3. Settings → Pages → Deploy from main branch → root
+  4. Your app will be live at https://yourname.github.io/repo-name
+==========================================================================
+-->
+
+<!-- Uncomment these Firebase SDK scripts when you add your Firebase config: -->
+<!--
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+-->
+</body>
+</html>
